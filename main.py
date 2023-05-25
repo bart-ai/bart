@@ -58,9 +58,10 @@ width = int(640)
 height = int(480)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 outvid = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
+numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
-for i in tqdm(range(129)):
-    if (i % 48 != 0 and i % 10 == 0):
+for i in tqdm(range(numberframes)):
+    if (i != 48 and i % 10 == 0):
         continue
     ret, frame = video.read()
     if not ret:
