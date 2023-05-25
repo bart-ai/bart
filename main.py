@@ -2,8 +2,9 @@ from roboflow import Roboflow
 import cv2
 import sys
 from tqdm import tqdm
+import imutils
 
-rf = Roboflow(api_key="roboflowapikey")
+rf = Roboflow(api_key="aVZZ7kyDSgHYfCJt0DCr")
 project = rf.workspace().project("billboards-cmzpu")
 model = project.version(3).model
 
@@ -53,8 +54,8 @@ trackers = cv2.legacy.MultiTracker_create()
 # img = cv2.imread("test.jpg")
 video = cv2.VideoCapture("test.mkv")
 fps = video.get(cv2.CAP_PROP_FPS)
-width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+width = int(640)
+height = int(480)
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 outvid = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
 
@@ -66,6 +67,7 @@ for i in tqdm(range(129)):
         break
     if frame is None:
         break
+    frame = cv2.resize(frame, (width, height))
 
     if i % 48 == 0:
         results = model.predict(
