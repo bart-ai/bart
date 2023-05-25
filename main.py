@@ -8,7 +8,7 @@ project = rf.workspace().project("billboards-cmzpu")
 model = project.version(3).model
 
 
-def objtobb(obj):
+def objToBbox(obj):
     x1 = obj["x"] - (obj["width"] / 2)
     y1 = obj["y"] - (obj["height"] / 2)
     x2 = obj["x"] + (obj["width"] / 2)
@@ -18,17 +18,31 @@ def objtobb(obj):
     return x1, y1, x2, y2, w, h
 
 
+def bboxToObject(bbox):
+    x1, y1, w, h = bbox
+    x1 = int(x1)
+    y1 = int(y1)
+    w = int(w)
+    h = int(h)
+    return x1, y1, x1 + w, y1 + h
+
+
+def bboxToTracker(bbox):
+    x1, y1, x2, y2, w, h = bbox
+    return (x1, y1, w, h)
+
+
 OPENCV_OBJECT_TRACKERS = {
     "csrt": cv2.legacy.TrackerCSRT_create,
-    # "kcf": cv2.TrackerKCF_create,
-    # "boosting": cv2.TrackerBoosting_create,
-    # "mil": cv2.TrackerMIL_create,
-    # "tld": cv2.TrackerTLD_create,
-    # "medianflow": cv2.TrackerMedianFlow_create,
-    # "mosse": cv2.TrackerMOSSE_create
+    "kcf": cv2.legacy.TrackerKCF_create,
+    "boosting": cv2.legacy.TrackerBoosting_create,
+    "mil": cv2.legacy.TrackerMIL_create,
+    "tld": cv2.legacy.TrackerTLD_create,
+    "medianflow": cv2.legacy.TrackerMedianFlow_create,
+    "mosse": cv2.legacy.TrackerMOSSE_create
 }
 
-tracker = OPENCV_OBJECT_TRACKERS['csrt']()
+trackers = cv2.legacy.MultiTracker_create()
 
 # model.predict(
 #     "test.jpg",
@@ -41,39 +55,33 @@ video = cv2.VideoCapture("test.mkv")
 fps = video.get(cv2.CAP_PROP_FPS)
 width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 outvid = cv2.VideoWriter('output.avi', fourcc, fps, (width, height))
 
-bbox = None
-
 for i in tqdm(range(129)):
+    if (i % 48 != 0 and i % 10 == 0):
+        continue
     ret, frame = video.read()
     if not ret:
         break
     if frame is None:
         break
 
-    if (bbox is None):
+    if i % 48 == 0:
         results = model.predict(
             frame,
             confidence=0,
             overlap=0,
         )
-        bbox = objtobb(results[1])
-        tracker.init(frame,
-                     (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]))
+        trackers = cv2.legacy.MultiTracker_create()
+        for bbox in [objToBbox(result) for result in results]:
+            tracker = OPENCV_OBJECT_TRACKERS['kcf']()
+            trackers.add(tracker, frame, bboxToTracker(bbox))
     else:
-        success, bbox = tracker.update(frame)
-        if success:
-            x1, y1, w, h = bbox
-            x1 = int(x1)
-            y1 = int(y1)
-            w = int(w)
-            h = int(h)
-            cv2.rectangle(frame, (x1, y1), (x1 + w, y1 + h), (0, 255, 0), 2)
-        else:
-            bbox = None
+        (success, boxes) = trackers.update(frame)
+        for box in boxes:
+            x1, y1, x2, y2 = bboxToObject(box)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
     # for obj in results:
     #     x1 = int(x1)
