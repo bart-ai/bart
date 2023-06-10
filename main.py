@@ -64,6 +64,7 @@ outvid = cv2.VideoWriter(f'out{args.video}', fourcc, fps, (width, height))
 numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
 for i in tqdm(range(numberframes)):
+    # Intentar que los skip frames no sean fijos, sean basados en la latencia/poder del cliente
     if (args.skip_frames and i % args.skip_frames == 0):
         continue
     ret, frame = video.read()
@@ -71,8 +72,10 @@ for i in tqdm(range(numberframes)):
         break
     if frame is None:
         break
+    # Usar imagen pequeña para detectar y para trackear la bbox, pero resizear el bbox para pintr en la imagen grande y no perder res.
     frame = cv2.resize(frame, (width, height))
 
+    # Encontrar alguna manera dinamica de decidir cuando rellamar al modelo (un estilo de "cambio un 20% de la imagen, es hora de llamar de nuevo", en vez de que sea yn numero de frames fijo
     if i % (args.secs_refetch * int(fps)) == 1:
         results = model.predict(
             frame,
