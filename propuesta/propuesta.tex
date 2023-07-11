@@ -1,13 +1,59 @@
-\documentclass{article}
+\documentclass{article}[12pt, a4paper]
 
-% Make it work on spanish
 \usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
 
+\usepackage{graphicx, geometry}
+
 \begin{document}
 
+\begin{titlepage}
+    \newgeometry{top=0.6in,bottom=0.6in,right=1in,left=1in}
+
+    \centering
+    \hfill
+    \begin{minipage}{0.7\textwidth}
+            \centering
+            \LARGE
+            \textsc{\textbf{Facultad de Ingeniería}}\\[0.1cm]
+            \textsc{\textbf{Universidad de Buenos Aires}}
+        \end{minipage}%
+        \begin{minipage}{2.6cm}
+            \centering
+            \includegraphics[width=2.6cm]{./img/fiuba.png}
+        \end{minipage}
+
+    \vspace{3cm}
+    \huge \bfseries Propuesta de Trabajo Profesional \\
+    \LARGE \bfseries Licenciatura en Análisis de Sistemas, Ingeniería en Informática
+    \vspace{2cm}
+
+    \rule{\linewidth}{0.3mm} \\[0.1cm]
+    \huge \bfseries Sistema de detección en tiempo real de publicidad en la vía pública \\
+    \rule{\linewidth}{0.3mm}\\[0.7cm]
+
+    \large \emph{Tutor:} Ing. Martín Buchwald\\[0.6cm]
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushleft}
+            \centering
+            \large del Mazo, Federico \\
+            100029
+        \end{flushleft}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushright}
+            \centering
+            \large Pastine, Casimiro \\
+            100017
+        \end{flushright}
+    \end{minipage}
+
+\end{titlepage}
+
+\restoregeometry
 \tableofcontents
+\newpage
 
 \section{Introducción}
-
+    Fede capo
 \end{document}
