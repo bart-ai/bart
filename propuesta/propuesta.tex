@@ -3,7 +3,14 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
 
-\usepackage{graphicx, geometry, array, booktabs}
+\usepackage{graphicx, geometry, array, booktabs, float, hyperref}
+\usepackage[dvipsnames]{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=RoyalBlue,
+}
+
 
 \begin{document}
 
@@ -69,7 +76,7 @@ El interés detrás de este proyecto radica en la creciente intrusión e invasi�
 
 \section{Descripción del problema}
 \subsection{Computer Vision}
-El campo de \emph{Computer Vision} se refiere a la disciplina de la inteligencia artificial que se ocupa de permitir a las computadoras "ver" y comprender el mundo visual de la misma manera que lo hacen los seres humanos. Utiliza diversas técnicas y algoritmos para adquirir, procesar, analizar y comprender imágenes y videos digitales con el objetivo de extraer información significativa y tomar decisiones basadas en ella.
+El campo de \emph{Computer Vision} se refiere a la disciplina de la inteligencia artificial que se ocupa de permitir a las computadoras ``ver'' y comprender el mundo visual de la misma manera que lo hacen los seres humanos. Utiliza diversas técnicas y algoritmos para adquirir, procesar, analizar y comprender imágenes y videos digitales con el objetivo de extraer información significativa y tomar decisiones basadas en ella.
 
 En los últimos años este campo ha experimentado un crecimiento y una atención considerable debido al aumento del poder computacional, la disponibilidad de grandes conjuntos de datos y los avances en el aprendizaje automático y las redes neuronales.
 
@@ -77,15 +84,19 @@ Uno de los avances más revolucionarios dentro del campo de \emph{Computer Visio
 
 Uno de los problemas iniciales de \emph{Computer Vision} es la clasificación de imágenes. Partiendo de una imagen, queremos saber si la misma contiene un objeto deseado, por ejemplo, podríamos tener una foto en la vía pública y querer saber si contiene o no a un cartel publicitario.
 
-<foto de classif>
+\begin{figure}[H]
+    \includegraphics[width=0.7\textwidth]{./img/classif.jpg}
+    \centering
+\end{figure}
 
 El paso siguiente a esto es la detección de objetos. Ya no solo importa si el cartel publicitario está presente, sino exactamente en qué porción de la imagen lo está.
 
-<foto de obj detection>
+\begin{figure}[H]
+    \includegraphics[width=0.7\textwidth]{./img/detection.jpg}
+    \centering
+\end{figure}
 
 Naturalmente el paso siguiente a detectar objetos en imágenes estáticas (fotografías), es hacerlo en video. Queremos detectar cuándo un objeto entra en escena, cuando sale, y poder seguirle el rastro en todo momento. Esto se denomina \emph{Object Traccking} y es la técnica principal sobre la cual basamos nuestro trabajo.
-
-<dos frames de video>
 
 El paso final en cuanto a la detección de objetos en nuestro trabajo incluye la meta de hacerlo en tiempo real. A diferencia de analizar un video pregrabado, donde es prescindible la velocidad de procesamiento, esto plantea el desafío considerable de tener que procesar los cuadros del video más rápido de lo que están siendo capturados para poder mostrar el resultado final inmediatamente.
 
@@ -103,14 +114,25 @@ En una arquitectura sin servidor, donde todo se ejecuta localmente, el principal
 \subsection{Tecnologías Relevantes al Trabajo}
 El lenguaje de programación que vamos a utilizar para realizar el trabajo es \emph{Python}, debido a que es ampliamente utilizado en el campo de \emph{Computer Vision} gracias a su flexibilidad, bibliotecas especializadas y facilidad de uso.
 
-La principal herramienta que utilizaremos es \emph{OpenCV}, una biblioteca de código abierto popular que proporciona una amplia gama de funciones y algoritmos para el procesamiento de imágenes y videos.
+La principal herramienta que utilizaremos es \emph{OpenCV}\textbf{[1]}, una biblioteca de código abierto popular que proporciona una amplia gama de funciones y algoritmos para el procesamiento de imágenes y videos.
 
-Para la construcción de la \emph{Red Neuronal Convolucional}, haremos uso de \emph{Keras}. Es una biblioteca de código abierto con una interfaz de alto nivel para redes neuronales de la biblioteca \emph{TensorFlow}, que usaremos para facilitarnos la construcción, entrenamiento y evaluación de modelos de aprendizaje profundo.
+Para la construcción de la \emph{Red Neuronal Convolucional}, haremos uso de \emph{Keras}\textbf{[2]}. Es una biblioteca de código abierto con una interfaz de alto nivel para redes neuronales de la biblioteca \emph{TensorFlow}\textbf{[3]}, que usaremos para facilitarnos la construcción, entrenamiento y evaluación de modelos de aprendizaje profundo.
 
-Una tecnología que ya mencionamos y de la cual vamos a hacer uso es \emph{WebAssembly (WASM)}. Nos va a permitir compilar el código fuente que realicemos en \emph{Python} a un código que pueda correr directamente en un navegador web sin tener que resignar su rendimiento.
+Una tecnología que ya mencionamos y de la cual vamos a hacer uso es \emph{WebAssembly (WASM)}\textbf{[4]}. Nos va a permitir compilar el código fuente que realicemos en \emph{Python} a un código que pueda correr directamente en un navegador web sin tener que resignar su rendimiento.
 
 Durante el desarrollo inicial, utilizaremos \emph{Roboflow}, un producto que ofrece acceso \emph{HTTP} a redes neuronales convolucionales de código abierto para clasificar imágenes y videos. Estas redes nos ayudarán en las pruebas de concepto y evaluación de opciones de desarrollo sin necesidad de crear nuestra propia red convolucional.
-Sin embargo, debido a la dependencia de un servicio externo y la latencia asociada, \emph{Roboflow} no formará parte del trabajo final. Los conjuntos de datos utilizados para entrenar las redes de \emph{Roboflow} son públicos y se utilizarán como una de las fuentes para entrenar nuestra propia red.
+Sin embargo, debido a la dependencia de un servicio externo y la latencia asociada, \emph{Roboflow}\textbf{[5]} no formará parte del trabajo final. Los conjuntos de datos utilizados para entrenar las redes de \emph{Roboflow} son públicos y se utilizarán como una de las fuentes para entrenar nuestra propia red.\\
+
+
+\textbf{[1]} OpenCV: \url{https://opencv.org/}
+
+\textbf{[2]} Keras: \url{https://keras.io/}
+
+\textbf{[3]} TensorFlow: \url{https://www.tensorflow.org/}
+
+\textbf{[4]} WebAssembly: \url{https://webassembly.org/}
+
+\textbf{[5]} Roboflow: \url{https://roboflow.com/}
 
 \section{Esquema de Trabajo}
 \subsection{Metas Parciales}
