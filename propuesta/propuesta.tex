@@ -3,11 +3,12 @@
 \usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
 
-\usepackage{graphicx, geometry, array, booktabs, float, hyperref}
+\usepackage{graphicx, geometry, array, booktabs, float, hyperref, setspace}
 \usepackage[dvipsnames]{xcolor}
 
 \hypersetup{
     colorlinks=true,
+    linkcolor=black,
     urlcolor=RoyalBlue,
 }
 
@@ -96,7 +97,7 @@ El paso siguiente a esto es la detección de objetos. Ya no solo importa si el c
     \centering
 \end{figure}
 
-Naturalmente el paso siguiente a detectar objetos en imágenes estáticas (fotografías), es hacerlo en video. Queremos detectar cuándo un objeto entra en escena, cuando sale, y poder seguirle el rastro en todo momento. Esto se denomina \emph{Object Traccking} y es la técnica principal sobre la cual basamos nuestro trabajo.
+Naturalmente el paso siguiente a detectar objetos en imágenes estáticas (fotografías), es hacerlo en video. Queremos detectar cuándo un objeto entra en escena, cuando sale, y poder seguirle el rastro en todo momento. Esto se denomina \emph{Object Tracking} y es la técnica principal sobre la cual basamos nuestro trabajo.
 
 El paso final en cuanto a la detección de objetos en nuestro trabajo incluye la meta de hacerlo en tiempo real. A diferencia de analizar un video pregrabado, donde es prescindible la velocidad de procesamiento, esto plantea el desafío considerable de tener que procesar los cuadros del video más rápido de lo que están siendo capturados para poder mostrar el resultado final inmediatamente.
 
@@ -118,21 +119,12 @@ La principal herramienta que utilizaremos es \emph{OpenCV}\textbf{[1]}, una bibl
 
 Para la construcción de la \emph{Red Neuronal Convolucional}, haremos uso de \emph{Keras}\textbf{[2]}. Es una biblioteca de código abierto con una interfaz de alto nivel para redes neuronales de la biblioteca \emph{TensorFlow}\textbf{[3]}, que usaremos para facilitarnos la construcción, entrenamiento y evaluación de modelos de aprendizaje profundo.
 
-Una tecnología que ya mencionamos y de la cual vamos a hacer uso es \emph{WebAssembly (WASM)}\textbf{[4]}. Nos va a permitir compilar el código fuente que realicemos en \emph{Python} a un código que pueda correr directamente en un navegador web sin tener que resignar su rendimiento.
+Para el armado de la red neuronal, haremos uso del dataset de imágenes \emph{Open Images}\textbf{[4]}, el cual proporciona una amplia colección de imágenes anotadas en diversas categorías. Este será una de las fuentes principales para entrenar nuestra red neuronal, ya que nos permitirá trabajar con un conjunto diverso y representativo de imágenes.
+
+Una tecnología que ya mencionamos y de la cual vamos a hacer uso es \emph{WebAssembly (WASM)}\textbf{[5]}. Nos va a permitir compilar el código fuente que realicemos en \emph{Python} a un código que pueda correr directamente en un navegador web sin tener que resignar su rendimiento.
 
 Durante el desarrollo inicial, utilizaremos \emph{Roboflow}, un producto que ofrece acceso \emph{HTTP} a redes neuronales convolucionales de código abierto para clasificar imágenes y videos. Estas redes nos ayudarán en las pruebas de concepto y evaluación de opciones de desarrollo sin necesidad de crear nuestra propia red convolucional.
-Sin embargo, debido a la dependencia de un servicio externo y la latencia asociada, \emph{Roboflow}\textbf{[5]} no formará parte del trabajo final. Los conjuntos de datos utilizados para entrenar las redes de \emph{Roboflow} son públicos y se utilizarán como una de las fuentes para entrenar nuestra propia red.\\
-
-
-\textbf{[1]} OpenCV: \url{https://opencv.org/}
-
-\textbf{[2]} Keras: \url{https://keras.io/}
-
-\textbf{[3]} TensorFlow: \url{https://www.tensorflow.org/}
-
-\textbf{[4]} WebAssembly: \url{https://webassembly.org/}
-
-\textbf{[5]} Roboflow: \url{https://roboflow.com/}
+Sin embargo, debido a la dependencia de un servicio externo y la latencia asociada, \emph{Roboflow}\textbf{[6]} no formará parte del trabajo final. Los conjuntos de datos utilizados para entrenar las redes de \emph{Roboflow} son públicos y se utilizarán como una de las fuentes para entrenar nuestra propia red.
 
 \section{Esquema de Trabajo}
 \subsection{Metas Parciales}
@@ -199,4 +191,30 @@ Para esta etapa realizaremos las siguientes metas: \textbf{WEB3, CNN3, CV5, CV6}
 El paso final del trabajo es integrar las distintas partes que se fueron desarrollando y lograr hacer procesamiento de videos en tiempo real, desde un sitio web ya desplegado.
 
 \end{itemize}
+
+\setcounter{secnumdepth}{0}
+\doublespacing
+
+\section{Referencias}
+
+\textbf{[1]} OpenCV: \url{https://opencv.org/}
+
+\textbf{[2]} Keras: \url{https://keras.io/}
+
+\textbf{[3]} TensorFlow: \url{https://www.tensorflow.org/}
+
+\textbf{[4]} Open Images Dataset: \url{https://storage.googleapis.com/openimages/web/index.html/}
+
+\textbf{[5]} WebAssembly: \url{https://webassembly.org/}
+
+\textbf{[6]} Roboflow: \url{https://roboflow.com/}
+
+\section{Bibliografía}
+
+Rosebrock, Adrian. (2017). \textit{Deep learning for Computer Vision with Python.}
+
+Ansari, Shamshad. (2020). \textit{Building Computer Vision Applications Using Artificial Neural Networks}, Apress.
+
+Moroney, Laurence. (2020). \textit{AI and Machine Learning for Coders}, O'Reilly.
+
 \end{document}
