@@ -1,46 +1,21 @@
-from roboflow import Roboflow
-import cv2
-import sys
-from tqdm import tqdm
-import imutils
 import argparse
+
+import cv2
+import numpy as np
+from tqdm import tqdm
+
+from cvutils import bboxToTracker, draw, overlap, trackerToBbox
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--skip-frames", default=10, type=int)
 parser.add_argument("--secs-refetch", default=1, type=int)
-parser.add_argument("--confidence", default=0, type=int)
-parser.add_argument("--overlap", default=0, type=int)
+parser.add_argument("--confidence", default=0.8, type=int)
 parser.add_argument("video")
 args = parser.parse_args()
 
-rf = Roboflow(api_key="aVZZ7kyDSgHYfCJt0DCr")
-project = rf.workspace().project("billboards-cmzpu")
-model = project.version(3).model
-
-
-def objToBbox(obj):
-    x1 = obj["x"] - (obj["width"] / 2)
-    y1 = obj["y"] - (obj["height"] / 2)
-    x2 = obj["x"] + (obj["width"] / 2)
-    y2 = obj["y"] + (obj["height"] / 2)
-    w = obj["width"]
-    h = obj["height"]
-    return x1, y1, x2, y2, w, h
-
-
-def bboxToObject(bbox):
-    x1, y1, w, h = bbox
-    x1 = int(x1)
-    y1 = int(y1)
-    w = int(w)
-    h = int(h)
-    return x1, y1, x1 + w, y1 + h
-
-
-def bboxToTracker(bbox):
-    x1, y1, x2, y2, w, h = bbox
-    return (x1, y1, w, h)
-
+net = cv2.dnn.readNetFromCaffe(
+    "deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel"
+)
 
 OPENCV_OBJECT_TRACKERS = {
     "csrt": cv2.legacy.TrackerCSRT_create,
@@ -49,7 +24,7 @@ OPENCV_OBJECT_TRACKERS = {
     "mil": cv2.legacy.TrackerMIL_create,
     "tld": cv2.legacy.TrackerTLD_create,
     "medianflow": cv2.legacy.TrackerMedianFlow_create,
-    "mosse": cv2.legacy.TrackerMOSSE_create
+    "mosse": cv2.legacy.TrackerMOSSE_create,
 }
 
 trackers = cv2.legacy.MultiTracker_create()
@@ -59,39 +34,70 @@ fps = video.get(cv2.CAP_PROP_FPS)
 width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-outvid = cv2.VideoWriter(f'out{args.video}', fourcc, fps, (width, height))
-numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+outvid = cv2.VideoWriter(
+    f"out-{args.video}", cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height)
+)
 
-for i in tqdm(range(numberframes)):
+numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+trackers = cv2.legacy.MultiTracker_create()
+
+for framenumber in tqdm(range(numberframes)):
     # Intentar que los skip frames no sean fijos, sean basados en la latencia/poder del cliente
-    if (args.skip_frames and i % args.skip_frames == 0):
+    if args.skip_frames and framenumber % args.skip_frames == 0:
         continue
+
     ret, frame = video.read()
-    if not ret:
+
+    # Failsafe: we shouldn't enter here
+    if not ret or frame is None:
         break
-    if frame is None:
-        break
-    # Usar imagen pequeña para detectar y para trackear la bbox, pero resizear el bbox para pintr en la imagen grande y no perder res.
-    frame = cv2.resize(frame, (width, height))
 
     # Encontrar alguna manera dinamica de decidir cuando rellamar al modelo (un estilo de "cambio un 20% de la imagen, es hora de llamar de nuevo", en vez de que sea yn numero de frames fijo
-    if i % (args.secs_refetch * int(fps)) == 1:
-        results = model.predict(
-            frame,
-            confidence=args.confidence,
-            overlap=args.overlap,
-        )
-        trackers = cv2.legacy.MultiTracker_create()
-        for bbox in [objToBbox(result) for result in results]:
-            tracker = OPENCV_OBJECT_TRACKERS['kcf']()
-            trackers.add(tracker, frame, bboxToTracker(bbox))
+    if not args.secs_refetch or framenumber % (args.secs_refetch * int(fps)) == 1:
+        blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300))
+        net.setInput(blob)
+        detections = net.forward()
+
+        # loop over the detections
+        for i in range(0, detections.shape[2]):
+            # extract the confidence (i.e., probability) associated with the
+            # prediction
+            confidence = detections[0, 0, i, 2]
+            # filter out weak detections by ensuring the `confidence` is
+            # greater than the minimum confidence
+            if confidence > args.confidence:
+                # compute the (x, y)-coordinates of the bounding box for the
+                # object
+                (startX, startY, endX, endY) = (
+                    detections[0, 0, i, 3:7] * np.array([width, height, width, height])
+                ).astype("int")
+
+                # draw the bounding box of the face along with the associated
+                # probability
+                draw(
+                    frame,
+                    (startX, startY, endX, endY),
+                    "{:.2f}%".format(confidence * 100),
+                )
+
+                # Check if we are already tracking this box
+                trackingBox = bboxToTracker(startX, startY, endX, endY)
+                tracked = False
+                for trackedBoxes in trackers.getObjects():
+                    if overlap(trackingBox, trackedBoxes):
+                        tracked = True
+                        break
+
+                if not tracked:
+                    tracker = OPENCV_OBJECT_TRACKERS["kcf"]()
+                    trackers.add(tracker, frame, trackingBox)
+
     else:
         (success, boxes) = trackers.update(frame)
         for box in boxes:
-            x1, y1, x2, y2 = bboxToObject(box)
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            # Como escribimos la confidence aca?
+            (startX, startY, endX, endY) = trackerToBbox(*box)
+            draw(frame, (startX, startY, endX, endY), color=(0, 255, 255))
+
     outvid.write(frame)
 
 video.release()
