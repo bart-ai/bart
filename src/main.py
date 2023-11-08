@@ -32,7 +32,7 @@ parser.add_argument(
     type=int,
     help="Confidence threshold to use when detecting objects\n0.8 == 80%% confidence\n(default: 0.8)",
 )
-parser.add_argument("video", help="mp4 video file to process")
+parser.add_argument("video", help="video file to process")
 args = parser.parse_args()
 
 # Set up the model
@@ -69,7 +69,9 @@ videobasename = os.path.basename(args.video)
 outvideoname = os.path.join(videodirectory, f"out-{videobasename}")
 
 # Save the output video with the same specs as the input one
-# TODO: make it work for non mp4 files, ¿investigate other codecs?
+# To make it web-friendly, convert it with:
+# `ffmpeg -i <input> -vcodec libx264 <output>`
+# TODO: this is turning up into a shorter video than the input one, ¿why?
 outvid = cv2.VideoWriter(
     outvideoname,
     cv2.VideoWriter_fourcc(*"mp4v"),
