@@ -1,5 +1,6 @@
 import argparse
 import time
+import os
 
 import cv2
 import numpy as np
@@ -36,7 +37,7 @@ args = parser.parse_args()
 
 # Set up the model
 net = cv2.dnn.readNetFromCaffe(
-    "deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel"
+    "model/deploy.prototxt", "model/res10_300x300_ssd_iter_140000.caffemodel"
 )
 
 # opencv's built-in object trackers
@@ -63,10 +64,14 @@ fps = video.get(cv2.CAP_PROP_FPS)
 numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 duration = numberframes / fps
 
+videodirectory = os.path.dirname(args.video)
+videobasename = os.path.basename(args.video)
+outvideoname = os.path.join(videodirectory, f"out-{videobasename}")
+
 # Save the output video with the same specs as the input one
 # TODO: make it work for non mp4 files, ¿investigate other codecs?
 outvid = cv2.VideoWriter(
-    f"out-{args.video}",
+    outvideoname,
     cv2.VideoWriter_fourcc(*"mp4v"),
     video.get(cv2.CAP_PROP_FPS),
     (width, height),
