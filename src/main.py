@@ -4,7 +4,7 @@ import os
 
 import cv2
 import numpy as np
-from tqdm import tqdm
+from tqdm import trange
 
 from cvutils import bboxToTracker, draw, overlap, trackerToBbox
 
@@ -82,98 +82,102 @@ outvid = cv2.VideoWriter(
 
 # Loop over the frames
 start = time.time()
-for framenumber in tqdm(range(numberframes)):
-    # calling the model / skipping the frame / calling our tracker logic:
-    # - The very first frame always calls the model
-    # - Every skip-frames, I should skip the frame
-    # - Every frames-refetch, I should refetch the model, if not, I should track the frame
-    # - We shouldn't skip the frame if we are going to refetch the model
-    if framenumber == 0 or (
-        args.frames_refetch and framenumber % args.frames_refetch == 0
-    ):
-        framestatus = "model"
-    elif args.skip_frames and framenumber % args.skip_frames == 0:
-        framestatus = "skip"
-    elif args.frames_refetch and framenumber % args.frames_refetch != 0:
-        framestatus = "track"
-    else:
-        framestatus = "model"
+with trange(numberframes) as pbar:
+    for framenumber in pbar:
+        # calling the model / skipping the frame / calling our tracker logic:
+        # - The very first frame always calls the model
+        # - Every skip-frames, I should skip the frame
+        # - Every frames-refetch, I should refetch the model, if not, I should track the frame
+        # - We shouldn't skip the frame if we are going to refetch the model
+        if framenumber == 0 or (
+            args.frames_refetch and framenumber % args.frames_refetch == 0
+        ):
+            framestatus = "model"
+        elif args.skip_frames and framenumber % args.skip_frames == 0:
+            framestatus = "skip"
+        elif args.frames_refetch and framenumber % args.frames_refetch != 0:
+            framestatus = "track"
+        else:
+            framestatus = "model"
 
-    # FRAME: skip it
-    if framestatus == "skip":
-        continue
+        pbar.set_postfix(s=framestatus)
 
-    ret, frame = video.read()
 
-    # Failsafe: we shouldn't enter here
-    if not ret or frame is None:
-        break
+        # FRAME: skip it
+        if framestatus == "skip":
+            continue
 
-    # FRAME: run the model
-    if framestatus == "model":
-        # Feed the frame to the model
-        # TODO: the 300x300 comes from the example model, can we un-hardcode it?
-        blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300))
-        net.setInput(blob)
+        ret, frame = video.read()
 
-        # Run the model itself
-        detections = net.forward()
+        # Failsafe: we shouldn't enter here
+        if not ret or frame is None:
+            break
 
-        # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
-        # loop over the detections
-        for i in range(0, detections.shape[2]):
-            # extract the confidence associated with the prediction
-            confidence = detections[0, 0, i, 2]
+        # FRAME: run the model
+        if framestatus == "model":
+            # Feed the frame to the model
+            # TODO: the 300x300 comes from the example model, can we un-hardcode it?
+            blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300))
+            net.setInput(blob)
 
-            # filter out weak detections by ensuring the `confidence` is
-            # greater than the minimum confidence
-            if not confidence > args.confidence:
-                continue
+            # Run the model itself
+            detections = net.forward()
 
-            # compute the (x, y)-coordinates of the bounding box for the object
-            # multiply by the frame size to get the actual coordinates
-            (startX, startY, endX, endY) = (
-                detections[0, 0, i, 3:7] * np.array([width, height, width, height])
-            ).astype("int")
+            # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
+            # loop over the detections
+            for i in range(0, detections.shape[2]):
+                # extract the confidence associated with the prediction
+                confidence = detections[0, 0, i, 2]
 
-            # draw the bounding box along with the associated probability
-            draw(
-                frame,
-                (startX, startY, endX, endY),
-                "{:.2f}%".format(confidence * 100),
-            )
+                # filter out weak detections by ensuring the `confidence` is
+                # greater than the minimum confidence
+                if not confidence > args.confidence:
+                    continue
 
-            # check if we are already tracking this object by a simple overlap
-            trackingBox = bboxToTracker(startX, startY, endX, endY)
-            tracked = False
-            for trackedBoxes in trackers.getObjects():
-                if overlap(trackingBox, trackedBoxes):
-                    tracked = True
-                    break
+                # compute the (x, y)-coordinates of the bounding box for the object
+                # multiply by the frame size to get the actual coordinates
+                (startX, startY, endX, endY) = (
+                    detections[0, 0, i, 3:7] * np.array([width, height, width, height])
+                ).astype("int")
 
-            # if we were not tracking the object, add it to our multitracker
-            if not tracked:
-                tracker = OPENCV_OBJECT_TRACKERS["kcf"]()
-                trackers.add(tracker, frame, trackingBox)
+                # draw the bounding box along with the associated probability
+                draw(
+                    frame,
+                    (startX, startY, endX, endY),
+                    "{:.2f}%".format(confidence * 100),
+                )
 
-    # FRAME: don't run the model, use our multitracker
-    elif framestatus == "track":
-        # Multitracking brings a whole set of problems to solve, but right now
-        # it doesn't appear to give any benefits. When we decide to activate it
-        # we should check
-        # - Instead of having a fixed number of frames before refetching the
-        # model, there might be a dynamic way to decide when to refetch it.
-        # maybe with a phash we can check if the image has changed enough from
-        # our last model call? maybe opencv has an img diff function?
-        # - What happens if the object goes out of frame? should we remove it
-        # from our multitracker? And what happens when it re-enters the frame?
-        (success, boxes) = trackers.update(frame)
-        for box in boxes:
-            (startX, startY, endX, endY) = trackerToBbox(*box)
-            draw(frame, (startX, startY, endX, endY), color=(0, 255, 255))
+                # check if we are already tracking this object by a simple overlap
+                trackingBox = bboxToTracker(startX, startY, endX, endY)
+                tracked = False
+                for trackedBoxes in trackers.getObjects():
+                    if overlap(trackingBox, trackedBoxes):
+                        tracked = True
+                        break
 
-    # Write the frame to the output video
-    outvid.write(frame)
+                # if we were not tracking the object, add it to our multitracker
+                if not tracked:
+                    tracker = OPENCV_OBJECT_TRACKERS["kcf"]()
+                    trackers.add(tracker, frame, trackingBox)
+
+        # FRAME: don't run the model, use our multitracker
+        elif framestatus == "track":
+            # Multitracking brings a whole set of problems to solve, but right now
+            # it doesn't appear to give any benefits. When we decide to activate it
+            # we should check
+            # - Instead of having a fixed number of frames before refetching the
+            # model, there might be a dynamic way to decide when to refetch it.
+            # maybe with a phash we can check if the image has changed enough from
+            # our last model call? maybe opencv has an img diff function?
+            # - What happens if the object goes out of frame? should we remove it
+            # from our multitracker? And what happens when it re-enters the frame?
+            (success, boxes) = trackers.update(frame)
+            for box in boxes:
+                (startX, startY, endX, endY) = trackerToBbox(*box)
+                draw(frame, (startX, startY, endX, endY), color=(0, 255, 255))
+
+        # Write the frame to the output video
+        outvid.write(frame)
 end = time.time()
 
 print(
