@@ -15,10 +15,10 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.RawTextHelpFormatter,
 )
 parser.add_argument(
-    "--skip-frames",
-    default=3,
+    "--target-fps",
+    default=15,
     type=int,
-    help="Number of frames to skip on the output video, helps performance\n0 == no frames are skipped; 10 == 1 out of 10 frames is skipped\n(default: 3)",
+    help="Frames per second of the output video\nLower values result in better performance\n(default: %(default)s)",
 )
 parser.add_argument(
     "--frames-refetch",
@@ -30,8 +30,9 @@ parser.add_argument(
     "--confidence",
     default=0.8,
     type=int,
-    help="Confidence threshold to use when detecting objects\n0.8 == 80%% confidence\n(default: 0.8)",
+    help="Confidence threshold to use when detecting objects\n0.8 == 80%% confidence\n(default: %(default)s)",
 )
+# TODO: make output name optional
 parser.add_argument("video", help="video file to process")
 args = parser.parse_args()
 
@@ -64,48 +65,34 @@ fps = video.get(cv2.CAP_PROP_FPS)
 numberframes = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 duration = numberframes / fps
 
+# Save output in the same directory as the input one, with the `out` prefix
 videodirectory = os.path.dirname(args.video)
 videobasename = os.path.basename(args.video)
 outvideoname = os.path.join(videodirectory, f"out-{videobasename}")
 
-# Save the output video with the same specs as the input one
+# Set the output video to the input video dimensions and the desired fps
 # To make it web-friendly, convert it with:
 # `ffmpeg -i <input> -vcodec libx264 <output>`
-# TODO: this is turning up into a shorter video than the input one, ¿why?
+sourcefps = round(video.get(cv2.CAP_PROP_FPS))
+targetfps = min(args.target_fps, sourcefps)
+skipframes = round(sourcefps / targetfps) if targetfps != sourcefps else 0
 outvid = cv2.VideoWriter(
     outvideoname,
     cv2.VideoWriter_fourcc(*"mp4v"),
-    video.get(cv2.CAP_PROP_FPS),
+    targetfps,
     (width, height),
 )
 
 
 # Loop over the frames
 start = time.time()
-with trange(numberframes) as pbar:
+with trange(round(numberframes / skipframes)) as pbar:
     for framenumber in pbar:
-        # calling the model / skipping the frame / calling our tracker logic:
-        # - The very first frame always calls the model
-        # - Every skip-frames, I should skip the frame
-        # - Every frames-refetch, I should refetch the model, if not, I should track the frame
-        # - We shouldn't skip the frame if we are going to refetch the model
-        if framenumber == 0 or (
-            args.frames_refetch and framenumber % args.frames_refetch == 0
-        ):
-            framestatus = "model"
-        elif args.skip_frames and framenumber % args.skip_frames == 0:
-            framestatus = "skip"
-        elif args.frames_refetch and framenumber % args.frames_refetch != 0:
+        if args.frames_refetch and framenumber % args.frames_refetch != 0:
             framestatus = "track"
         else:
             framestatus = "model"
-
-        pbar.set_postfix(s=framestatus)
-
-
-        # FRAME: skip it
-        if framestatus == "skip":
-            continue
+        pbar.set_postfix(framestatus=framestatus)
 
         ret, frame = video.read()
 
@@ -178,10 +165,27 @@ with trange(numberframes) as pbar:
 
         # Write the frame to the output video
         outvid.write(frame)
+
+        # Skip the next frames in order to keep the target fps
+        for _ in range(skipframes - 1):
+            video.read()
+
 end = time.time()
 
+# Release the opened output video to then be able to read it again
+outvid.release()
+
+
+# Open up the output video again to get its specs
+outvid = cv2.VideoCapture(outvideoname)
+outvidframes = int(outvid.get(cv2.CAP_PROP_FRAME_COUNT))
+outvidfps = outvid.get(cv2.CAP_PROP_FPS)
+
 print(
-    f"Summary: processed {round(duration, 2)} seconds of video ({numberframes} frames) in {round(end-start, 2)} seconds"
+    f"""Summary: processed {round(duration, 2)} seconds of video in {round(end-start, 2)} seconds
+    Input {args.video}: {numberframes} frames  @ {fps} fps
+    Output {outvideoname}: {outvidframes} frames  @ {outvidfps} fps
+    """
 )
 
 # Release the video files
