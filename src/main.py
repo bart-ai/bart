@@ -21,16 +21,16 @@ parser.add_argument(
     help="Frames per second of the output video\nLower values result in better performance\n(default: %(default)s)",
 )
 parser.add_argument(
-    "--frames-refetch",
+    "--secs-refetch",
     default=0,
     type=int,
-    help="Number of frames before refetching the model, ¿helps performance?\n0 == the model is refetched every frame; 10 == the model is refetched every 10 frames\n(default: 0)",
+    help="Number of seconds before refetching the model\nObjects detected by the model are tracked between refetches\n(example: 0 == there's no tracking involved)\n(example: 2 == the model is refetched every 2 seconds)\n(default: %(default)s)",
 )
 parser.add_argument(
     "--confidence",
     default=0.8,
     type=int,
-    help="Confidence threshold to use when detecting objects\n0.8 == 80%% confidence\n(default: %(default)s)",
+    help="Confidence threshold to use when detecting objects\n(example: 0.15 == 15%% confidence)\n(default: %(default)s)",
 )
 # TODO: make output name optional
 parser.add_argument("video", help="video file to process")
@@ -88,7 +88,7 @@ outvid = cv2.VideoWriter(
 start = time.time()
 with trange(round(numberframes / skipframes)) as pbar:
     for framenumber in pbar:
-        if args.frames_refetch and framenumber % args.frames_refetch != 0:
+        if args.secs_refetch and framenumber % (args.secs_refetch * targetfps) != 0:
             framestatus = "track"
         else:
             framestatus = "model"
