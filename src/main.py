@@ -78,6 +78,7 @@ outvideoname = os.path.join(videodirectory, f"out-{videobasename}")
 sourcefps = round(video.get(cv2.CAP_PROP_FPS))
 targetfps = min(args.target_fps, sourcefps)
 skipframes = round(sourcefps / targetfps) if targetfps != sourcefps else 0
+targetframes = round(numberframes / skipframes) if skipframes else numberframes
 outvid = cv2.VideoWriter(
     outvideoname,
     cv2.VideoWriter_fourcc(*"mp4v"),
@@ -85,10 +86,9 @@ outvid = cv2.VideoWriter(
     (width, height),
 )
 
-
 # Loop over the frames
 start = time.time()
-with trange(round(numberframes / skipframes)) as pbar:
+with trange(targetframes) as pbar:
     for framenumber in pbar:
         if args.secs_refetch and framenumber % (args.secs_refetch * targetfps) != 0:
             framestatus = "track"
