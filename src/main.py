@@ -169,8 +169,13 @@ with trange(round(numberframes / skipframes)) as pbar:
         outvid.write(frame)
 
         # Skip the next frames in order to keep the target fps
-        for _ in range(skipframes - 1):
-            video.read()
+        # When we need to skip lots of frames (hardcoded at 100), it's better to
+        # use the `set` method instead of reading the frames one by one
+        if skipframes >= 100:
+            video.set(cv2.CAP_PROP_POS_FRAMES, framenumber * skipframes)
+        else:
+            for _ in range(skipframes - 1):
+                video.read()
 
 end = time.time()
 
