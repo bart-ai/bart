@@ -37,8 +37,10 @@ parser.add_argument("video", help="video file to process")
 args = parser.parse_args()
 
 # Set up the model
+cwd = os.path.dirname(os.path.realpath(__file__))
 net = cv2.dnn.readNetFromCaffe(
-    "model/deploy.prototxt", "model/res10_300x300_ssd_iter_140000.caffemodel"
+    f"{cwd}/model/deploy.prototxt",
+    f"{cwd}/model/res10_300x300_ssd_iter_140000.caffemodel",
 )
 
 # opencv's built-in object trackers
