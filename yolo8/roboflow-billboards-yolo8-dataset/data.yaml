@@ -1,0 +1,13 @@
+train: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/train/images
+val: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/valid/images
+test: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/test/images
+
+nc: 1
+names: ['Werbetafel frei']
+
+roboflow:
+  workspace: billboards
+  project: billboards-cmzpu
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/billboards/billboards-cmzpu/dataset/3

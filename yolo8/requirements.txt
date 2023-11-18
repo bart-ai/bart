@@ -1,0 +1,4 @@
+ultralytics==8.0.212
+torch==2.1.1
+torchvision==0.16.1
+comet-ml==3.35.3
