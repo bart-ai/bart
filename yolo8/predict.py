@@ -2,7 +2,7 @@ from PIL import Image
 from ultralytics import YOLO
 
 # Load a pretrained YOLOv8n model
-model = YOLO('./first-yolov8n-test.pt')
+model = YOLO('./yolov8n_v8_50e/weights/best.pt')
 
 # results = model('test-billboard.jpeg')  # results list
 results = model('../test.jpg')  # results list
