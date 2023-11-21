@@ -5,6 +5,7 @@ import os
 import cv2
 import numpy as np
 from tqdm import trange
+from imutils.video import FPS
 
 from cvutils import bboxToTracker, draw, overlap, trackerToBbox
 
@@ -87,7 +88,7 @@ outvid = cv2.VideoWriter(
 )
 
 # Loop over the frames
-start = time.time()
+timer = FPS().start()
 with trange(targetframes) as pbar:
     for framenumber in pbar:
         if args.secs_refetch and framenumber % (args.secs_refetch * targetfps) != 0:
@@ -177,7 +178,8 @@ with trange(targetframes) as pbar:
             for _ in range(skipframes - 1):
                 video.read()
 
-end = time.time()
+        timer.update()
+timer.stop()
 
 # Release the opened output video to then be able to read it again
 outvid.release()
@@ -189,7 +191,7 @@ outvidframes = int(outvid.get(cv2.CAP_PROP_FRAME_COUNT))
 outvidfps = outvid.get(cv2.CAP_PROP_FPS)
 
 print(
-    f"""Summary: processed {round(duration, 2)} seconds of video in {round(end-start, 2)} seconds
+    f"""Summary: processed {round(duration, 2)} seconds of video in {round(timer.elapsed(), 2)} seconds ({round(timer.fps(), 2)} fps)
     Input {args.video}: {numberframes} frames  @ {fps} fps
     Output {outvideoname}: {outvidframes} frames  @ {outvidfps} fps
     """
