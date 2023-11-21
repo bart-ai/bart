@@ -38,6 +38,8 @@ parser.add_argument("video", help="video file to process")
 args = parser.parse_args()
 
 # Set up the model
+# TODO: parametrize model and call `readNet` abstraction
+# If there's no model, make sure to skip it, to have just a videoprocessing tool
 cwd = os.path.dirname(os.path.realpath(__file__))
 net = cv2.dnn.readNetFromCaffe(
     f"{cwd}/model/deploy.prototxt",
@@ -80,6 +82,9 @@ sourcefps = round(video.get(cv2.CAP_PROP_FPS))
 targetfps = min(args.target_fps, sourcefps)
 skipframes = round(sourcefps / targetfps) if targetfps != sourcefps else 0
 targetframes = round(numberframes / skipframes) if skipframes else numberframes
+# TODO: Make the neccessary setup to be able to use the h264 codec here and
+# make it parametrizeable
+# TODO: Play and parametrize with VIDEOWRITER_PROP_QUALITY
 outvid = cv2.VideoWriter(
     outvideoname,
     cv2.VideoWriter_fourcc(*"mp4v"),
