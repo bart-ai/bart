@@ -1,0 +1,10 @@
+{
+  "name": "bart-web",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npx http-server"
+  },
+  "dependencies": {
+    "@stlite/mountable": "^0.42.3"
+  }
+}

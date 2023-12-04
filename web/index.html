@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Serverless Image Processing App</title>
+    <meta
+      name="description"
+      content="A Serverless Streamlit application with OpenCV image processing that completely works on your browser"
+    />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@stlite/mountable/build/stlite.css"
+    />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script src="./node_modules/@stlite/mountable/build/stlite.js"></script>
+    <script>
+      async function main() {
+        stlite.mount(
+          {
+            requirements: ["opencv-python"],
+            files: {
+              "web.py": await fetch("web.py").then((res) => res.text()),
+            },
+            entrypoint: "web.py",
+          },
+          document.getElementById("root")
+        );
+      }
+      main();
+    </script>
+  </body>
+</html>
