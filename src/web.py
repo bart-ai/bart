@@ -23,6 +23,8 @@ def call_detect(frame):
 
 if st.toggle("use webrtc", True):
     webrtc_streamer(
+        # https://github.com/whitphx/streamlit-webrtc#serving-from-remote-host
+        rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
         video_frame_callback=call_detect,
         media_stream_constraints={
             "video": {"facingMode": "environment"},
