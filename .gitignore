@@ -1,2 +1,4 @@
 .venv/
 .DS_Store
+test-videos/out-*.mp4
+__pycache__/
