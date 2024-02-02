@@ -9,7 +9,7 @@ from tqdm import trange
 
 # Command line parsing
 parser = argparse.ArgumentParser(
-    prog="main.py",
+    prog="script.py",
     description="Video object detector",
     formatter_class=argparse.RawTextHelpFormatter,
 )
