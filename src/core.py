@@ -8,8 +8,8 @@ import numpy as np
 def get_model():
     cwd = os.path.dirname(os.path.realpath(__file__))
     net = cv2.dnn.readNet(
-        f"{cwd}/model/res10_300x300_ssd_iter_140000.caffemodel",
-        f"{cwd}/model/deploy.prototxt",
+        f"{cwd}/model/face-detection/res10_300x300_ssd_iter_140000.caffemodel",
+        f"{cwd}/model/face-detection/deploy.prototxt",
     )
     dimensions = (300, 300)
     model = (net, dimensions)
