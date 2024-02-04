@@ -1,4 +1,0 @@
-opencv-python==4.8.0.74
-roboflow==1.1.1
-tqdm==4.65.0
-imutils==0.5.4
