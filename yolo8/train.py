@@ -32,8 +32,8 @@ print('[INFO] Start traning')
 
 # Training.
 results = model.train(
-   name='yolov8n_v8_50e',
-   project='/Users/casimiropastine/fiuba/tpp/yolo8/',
+   name='yolov8n_v8_50e_2',
+   project='./',
    data=YOLO_DATA_YML_PATH,
    imgsz=IMAGE_SIZE,
    epochs=EPOCHS,
