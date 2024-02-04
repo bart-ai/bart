@@ -14,3 +14,9 @@ Para cambiar el training set hay que cambiar `YOLO_DATA_YML_PATH` para que apunt
 Para probar el modelo (rapidamente) solo hay que correr el archivo `predict.py`.
 
 Dentro de este archivo está el path a la imagen a predecir.
+
+# Cómo exportar el modelo para usar en la web-app
+
+Una vez que tenemos el modelo entrenado y queremos utilizarlo en la web-app, podemos hacer uso del script `convert_to_onnx.py`.
+
+Esto nos va a generar un modelo de tipo `.onnx` que podemos mover dentro de `src/model` para poder utilizarlo desde la web.
