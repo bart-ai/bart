@@ -1,17 +1,15 @@
 import argparse
-import time
 import os
 
+import core
 import cv2
-import numpy as np
-from tqdm import trange
+from cvutils import draw, trackerToBbox
 from imutils.video import FPS
-
-from cvutils import bboxToTracker, draw, overlap, trackerToBbox
+from tqdm import trange
 
 # Command line parsing
 parser = argparse.ArgumentParser(
-    prog="main.py",
+    prog="script.py",
     description="Video object detector",
     formatter_class=argparse.RawTextHelpFormatter,
 )
@@ -36,15 +34,6 @@ parser.add_argument(
 # TODO: make output name optional
 parser.add_argument("video", help="video file to process")
 args = parser.parse_args()
-
-# Set up the model
-# TODO: parametrize model and call `readNet` abstraction
-# If there's no model, make sure to skip it, to have just a videoprocessing tool
-cwd = os.path.dirname(os.path.realpath(__file__))
-net = cv2.dnn.readNetFromCaffe(
-    f"{cwd}/model/deploy.prototxt",
-    f"{cwd}/model/res10_300x300_ssd_iter_140000.caffemodel",
-)
 
 # opencv's built-in object trackers
 OPENCV_OBJECT_TRACKERS = {
@@ -110,50 +99,20 @@ with trange(targetframes) as pbar:
 
         # FRAME: run the model
         if framestatus == "model":
-            # Feed the frame to the model
-            # TODO: the 300x300 comes from the example model, can we un-hardcode it?
-            blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300))
-            net.setInput(blob)
+            core.detect(frame, args.confidence)
+        # TODO: Recover this code once we start using the tracking functionality
+        # # check if we are already tracking this object by a simple overlap
+        # trackingBox = bboxToTracker(startX, startY, endX, endY)
+        # tracked = False
+        # for trackedBoxes in trackers.getObjects():
+        #     if overlap(trackingBox, trackedBoxes):
+        #         tracked = True
+        #         break
 
-            # Run the model itself
-            detections = net.forward()
-
-            # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
-            # loop over the detections
-            for i in range(0, detections.shape[2]):
-                # extract the confidence associated with the prediction
-                confidence = detections[0, 0, i, 2]
-
-                # filter out weak detections by ensuring the `confidence` is
-                # greater than the minimum confidence
-                if not confidence > args.confidence:
-                    continue
-
-                # compute the (x, y)-coordinates of the bounding box for the object
-                # multiply by the frame size to get the actual coordinates
-                (startX, startY, endX, endY) = (
-                    detections[0, 0, i, 3:7] * np.array([width, height, width, height])
-                ).astype("int")
-
-                # draw the bounding box along with the associated probability
-                draw(
-                    frame,
-                    (startX, startY, endX, endY),
-                    "{:.2f}%".format(confidence * 100),
-                )
-
-                # check if we are already tracking this object by a simple overlap
-                trackingBox = bboxToTracker(startX, startY, endX, endY)
-                tracked = False
-                for trackedBoxes in trackers.getObjects():
-                    if overlap(trackingBox, trackedBoxes):
-                        tracked = True
-                        break
-
-                # if we were not tracking the object, add it to our multitracker
-                if not tracked:
-                    tracker = OPENCV_OBJECT_TRACKERS["kcf"]()
-                    trackers.add(tracker, frame, trackingBox)
+        # # if we were not tracking the object, add it to our multitracker
+        # if not tracked:
+        #     tracker = OPENCV_OBJECT_TRACKERS["kcf"]()
+        #     trackers.add(tracker, frame, trackingBox)
 
         # FRAME: don't run the model, use our multitracker
         elif framestatus == "track":

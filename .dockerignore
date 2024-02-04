@@ -1,0 +1,9 @@
+# flyctl launch added from .gitignore
+**/.venv
+**/test-videos/out-*.mp4
+**/__pycache__
+
+# flyctl launch added from propuesta/.gitignore
+propuesta/
+test-videos/
+fly.toml
