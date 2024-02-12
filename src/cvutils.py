@@ -36,7 +36,5 @@ def draw(frame, rectangle, text=None, color=(0, 255, 0)):
             frame,
             text,
             (startX, ytext),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.45,
-            color,
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2
         )
