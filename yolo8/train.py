@@ -1,7 +1,12 @@
 import comet_ml
 from ultralytics import YOLO
+from ultralytics import settings
+import os
 
-print('[INFO] Starting...')
+# Set the datasets directory to the current working directory
+settings.update({"datasets_dir": os.getcwd()})
+
+print("[INFO] Starting...")
 
 # This is for tracking the model's performance over time.
 # You should have the comet API key defined in your environment variables.
