@@ -26,9 +26,7 @@ def bboxToTracker(startX, startY, endX, endY):
 # Draw a rectangle on the frame, with optional text
 def draw(frame, rectangle, text=None, color=(0, 255, 0)):
     (startX, startY, endX, endY) = rectangle
-    print('drawing rectangle', startX, startY, endX, endY)
     cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-    print('done drawing rectangle')
 
     if text:
         ytext = startY - 10 if startY - 10 > 10 else startY + 10
