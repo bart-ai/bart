@@ -1,5 +1,4 @@
 import os
-from collections import defaultdict
 
 import cv2
 import numpy as np
@@ -25,7 +24,7 @@ def get_model():
 
 def detect(frame, confidence=0.8, model=get_model()):
     # Feed the frame to the model
-    net, _ = model
+    net, dimensions = model
 
     # Read the input image
     original_image = frame
@@ -40,7 +39,7 @@ def detect(frame, confidence=0.8, model=get_model()):
     scale = length / 640
 
     # Preprocess the image and prepare blob for model
-    blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=(640, 640), swapRB=True)
+    blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=dimensions, swapRB=True)
     net.setInput(blob)
 
     # Perform inference
