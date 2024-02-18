@@ -47,7 +47,7 @@ class Model:
         image[0:height, 0:width] = original_image
 
         # Calculate scale factor
-        scale = length / 640
+        scale = length / IMAGE_SIZE
 
         # Preprocess the image and prepare blob for model
         blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=dimensions, swapRB=True)
