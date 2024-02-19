@@ -1,4 +1,4 @@
-import comet_ml
+from comet_ml import Experiment
 from ultralytics import YOLO
 from ultralytics import settings
 import os
@@ -11,7 +11,9 @@ print("[INFO] Starting...")
 # This is for tracking the model's performance over time.
 # You should have the comet API key defined in your environment variables.
 # export COMET_API_KEY=<Your API Key>
-comet_ml.init(project_name="test-yolov8-billboards")
+experiment = Experiment(
+    project_name="test-yolov8-billboards", api_key=os.environ["COMET_API_KEY"]
+)
 
 print('[INFO] Comet ML configured')
 
@@ -21,7 +23,8 @@ YOLO8_MODELS = {
   'medium': 'yolov8m.pt',
 }
 
-model = YOLO(YOLO8_MODELS['nano'])
+YOLO8_MODEL = YOLO8_MODELS["nano"]
+model = YOLO(f"{YOLO8_MODEL}.pt")
 
 print('[INFO] Model has loaded')
 
@@ -35,9 +38,12 @@ BATCH_SIZE=8
 
 print('[INFO] Start traning')
 
+experiment_name = f"{YOLO8_MODEL}-e{EPOCHS}"
+experiment.set_name(experiment_name)
+
 # Training.
 results = model.train(
-   name='yolov8n_v8_50e_2',
+   name=experiment_name,
    project='./',
    data=YOLO_DATA_YML_PATH,
    imgsz=IMAGE_SIZE,
