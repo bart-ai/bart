@@ -18,9 +18,11 @@ experiment = Experiment(
 print('[INFO] Comet ML configured')
 
 YOLO8_MODELS = {
-  'nano': 'yolov8n.pt',
-  'small': 'yolov8s.pt',
-  'medium': 'yolov8m.pt',
+    "nano": "yolov8n",
+    "small": "yolov8s",
+    "medium": "yolov8m",
+    "large": "yolov8l",
+    "xlarge": "yolov8x",
 }
 
 YOLO8_MODEL = YOLO8_MODELS["nano"]
