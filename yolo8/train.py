@@ -36,7 +36,6 @@ YOLO_DATA_YML_PATH = './roboflow-billboards-yolo8-dataset/data.yaml'
 # Hyperparameters
 IMAGE_SIZE=640
 EPOCHS=50
-BATCH_SIZE=8
 
 print('[INFO] Start traning')
 
@@ -50,10 +49,11 @@ results = model.train(
    data=YOLO_DATA_YML_PATH,
    imgsz=IMAGE_SIZE,
    epochs=EPOCHS,
-   batch=BATCH_SIZE,
+   batch=-1,  # Use auto batch size
   # To enable training on Apple M1 and M2 chips,
   # you should specify 'mps' as your device when initiating the training process.
-   device='mps'
+  # Comment out for automatic device selection
+  device="mps",
 )
 
 # This exports the model in an onnx format, which is later used in the wb app.
