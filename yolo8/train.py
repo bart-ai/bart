@@ -50,6 +50,10 @@ results = model.train(
    imgsz=IMAGE_SIZE,
    epochs=EPOCHS,
    batch=-1,  # Use auto batch size
+
+  # Load the hyperparameters from `tune.py`
+  # cfg="best_hyperparameters.yaml"
+
   # To enable training on Apple M1 and M2 chips,
   # you should specify 'mps' as your device when initiating the training process.
   # Comment out for automatic device selection
