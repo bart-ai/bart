@@ -1,14 +1,15 @@
 import av
-import core
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
+
+import core
 
 st.title("bart: blocking ads in real time")
 
 
 @st.cache_resource
 def cached_get_model():
-    return core.get_model()
+    return core.Model(core.Model.detect_billboards)
 
 
 model = cached_get_model()
@@ -16,7 +17,7 @@ model = cached_get_model()
 
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
-    img = core.detect(img, model=model)
+    img = model.detect(img)
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 

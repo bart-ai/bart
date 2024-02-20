@@ -42,3 +42,7 @@ results = model.train(
   # you should specify 'mps' as your device when initiating the training process.
    device='mps'
 )
+
+# This exports the model in an onnx format, which is later used in the wb app.
+# You can also export an exisiting model result using the convert_to_onnx.py script.
+model.export(format='onnx', simplify=True, imgsz=[IMAGE_SIZE, IMAGE_SIZE])
