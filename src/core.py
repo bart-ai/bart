@@ -33,7 +33,7 @@ class Model:
         model = (net, dimensions)
         return model
 
-    def _detect_onnx_model(self, frame):
+    def _detect_onnx_model(self, frame, confidence):
         # Feed the frame to the model
         net, dimensions = self.model
 
@@ -67,7 +67,7 @@ class Model:
         for i in range(rows):
             classes_scores = outputs[0][i][4:]
             (minScore, maxScore, minClassLoc, (x, maxClassIndex)) = cv2.minMaxLoc(classes_scores)
-            if maxScore >= self.confidence:
+            if maxScore >= confidence:
                 box = [
                     outputs[0][i][0] - (0.5 * outputs[0][i][2]),
                     outputs[0][i][1] - (0.5 * outputs[0][i][3]),
@@ -93,7 +93,7 @@ class Model:
 
         return frame
 
-    def _detect_caffe_model(self, frame):
+    def _detect_caffe_model(self, frame, confidence):
         # Feed the frame to the model
         net, net_dimensions = self.model
         blob = cv2.dnn.blobFromImage(frame, 1.0, net_dimensions)
@@ -110,7 +110,7 @@ class Model:
 
             # filter out weak detections by ensuring the `confidence` is
             # greater than the minimum confidence
-            if not detection_confidence > self.confidence:
+            if not detection_confidence > confidence:
                 continue
 
             # compute the (x, y)-coordinates of the bounding box for the object
@@ -124,15 +124,14 @@ class Model:
             cvutils.draw(
                 frame,
                 (startX, startY, endX, endY),
-                "{:.2f}%".format(detection_confidence * 100),
+                "Face: {:.2f}%".format(detection_confidence * 100),
             )
 
         return frame
 
-    def __init__(self, model_type='billboards', confidence=0.8):
+    def __init__(self, model_type='billboards'):
         self.model = self._load_onnx_model() if model_type == Model.detect_billboards else self._load_caffe_model()
         self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
-        self.confidence = confidence
 
-    def detect(self, frame):
-        self.detect(frame)
+    def detect(self, frame, confidence = 0.8):
+        self.detect(frame, confidence)

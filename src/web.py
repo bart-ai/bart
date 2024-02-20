@@ -17,7 +17,7 @@ model = cached_get_model()
 
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
-    img = model.detect(img)
+    img = model.detect(img, confidence=confidence / 100)
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -34,3 +34,5 @@ webrtc_streamer(
     video_html_attrs={"controls": False, "autoPlay": True},
     key="webrtc",
 )
+
+confidence = st.slider("Detection score", min_value=0, max_value=100, value=80, step=5)
