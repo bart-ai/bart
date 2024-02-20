@@ -9,8 +9,8 @@ IMAGE_SIZE = 640
 
 class Model:
 
-    detect_faces = 'faces'
-    detect_billboards = 'billboards'
+    detect_faces = 'face'
+    detect_billboards = 'billboard'
 
     def _load_onnx_model(self):
         cwd = os.path.dirname(os.path.realpath(__file__))
@@ -33,7 +33,7 @@ class Model:
         model = (net, dimensions)
         return model
 
-    def _detect_onnx_model(self, frame, confidence):
+    def _detect_onnx_model(self, frame, transformation, confidence):
         # Feed the frame to the model
         net, dimensions = self.model
 
@@ -85,15 +85,16 @@ class Model:
         for i in range(len(result_boxes)):
             index = result_boxes[i]
             box = boxes[index]
+            # TODO: investigate why some of this coordinates might be negative
             startX = round(box[0] * scale)
             startY = round(box[1] * scale)
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
-            cvutils.draw(original_image, (startX, startY, endX, endY), f"Billboard ({scores[index]:.2f})")
+            self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
 
         return frame
 
-    def _detect_caffe_model(self, frame, confidence):
+    def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
         net, net_dimensions = self.model
         blob = cv2.dnn.blobFromImage(frame, 1.0, net_dimensions)
@@ -119,19 +120,30 @@ class Model:
             (startX, startY, endX, endY) = (
                 detections[0, 0, i, 3:7] * np.array([width, height, width, height])
             ).astype("int")
-
-            # draw the bounding box along with the associated probability
-            cvutils.draw(
+            self.transform(
                 frame,
                 (startX, startY, endX, endY),
-                "Face: {:.2f}%".format(detection_confidence * 100),
+                detection_confidence,
+                transformation,
             )
 
         return frame
 
+    def transform(self, frame, rectangle, score, transformation):
+        if transformation == "detect":
+            cvutils.draw(
+                frame,
+                rectangle,
+                f"{self.object}: {score*100:.2f}%",
+            )
+        elif transformation == "blur":
+            cvutils.blur(frame, rectangle)
+
+
     def __init__(self, model_type='billboards'):
         self.model = self._load_onnx_model() if model_type == Model.detect_billboards else self._load_caffe_model()
         self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
+        self.object = model_type
 
-    def detect(self, frame, confidence = 0.8):
-        self.detect(frame, confidence)
+    def detect(self, frame, transformation = "detect", confidence = 0.8):
+        self.detect(frame, transformation, confidence)

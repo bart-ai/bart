@@ -4,6 +4,11 @@ from streamlit_webrtc import webrtc_streamer
 
 import core
 
+TRANSFORMATION_LABELS = {
+    "detect": "Detect",
+    "blur": "Blur",
+}
+
 st.title("bart: blocking ads in real time")
 
 
@@ -17,7 +22,7 @@ model = cached_get_model()
 
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
-    img = model.detect(img, confidence=confidence / 100)
+    img = model.detect(img, transformation=transformation, confidence=confidence / 100)
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -35,4 +40,12 @@ webrtc_streamer(
     key="webrtc",
 )
 
-confidence = st.slider("Detection score", min_value=0, max_value=100, value=80, step=5)
+with st.expander("Configuration"):
+    transformation = st.selectbox(
+        "Transformation",
+        options=("detect", "blur"),
+        format_func=lambda x: TRANSFORMATION_LABELS[x],
+    )
+    confidence = st.slider(
+        "Detection score", min_value=0, max_value=100, value=80, step=5
+    )
