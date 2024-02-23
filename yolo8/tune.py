@@ -28,7 +28,7 @@ YOLO_DATA_YML_PATH = "./roboflow-billboards-yolo8-dataset/data.yaml"
 # Hyperparameters
 IMAGE_SIZE = 640
 EPOCHS = 50
-TUNING_ITERATIONS = 30
+TUNING_ITERATIONS = 5
 
 print("[INFO] Start tuning")
 
