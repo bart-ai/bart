@@ -1,0 +1,29 @@
+# 5/5 iterations complete ✅ (108876.38s)
+# Results saved to tune2
+# Best fitness=0.70268 observed at iteration 5
+# Best fitness metrics are {'metrics/precision(B)': 0.91514, 'metrics/recall(B)': 0.86272, 'metrics/mAP50(B)': 0.90221, 'metrics/mAP50-95(B)': 0.68051, 'val/box_loss': 0.78889, 'val/cls_loss': 0.76147, 'val/dfl_loss': 1.75621, 'fitness': 0.70268}
+# Best fitness model is yolov8s-e505
+# Best fitness hyperparameters are printed below.
+
+lr0: 0.01118
+lrf: 0.01192
+momentum: 0.94444
+weight_decay: 0.00046
+warmup_epochs: 2.99943
+warmup_momentum: 0.69429
+box: 6.6287
+cls: 0.55825
+dfl: 2.02535
+hsv_h: 0.01465
+hsv_s: 0.68413
+hsv_v: 0.36772
+degrees: 0.0
+translate: 0.08898
+scale: 0.48049
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.49802
+mosaic: 0.80062
+mixup: 0.0
+copy_paste: 0.0
