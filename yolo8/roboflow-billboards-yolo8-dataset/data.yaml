@@ -1,6 +1,7 @@
-train: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/train/images
-val: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/valid/images
-test: /Users/casimiropastine/fiuba/tpp/yolo8/roboflow-billboards-yolo8-dataset/test/images
+path: ./
+train: roboflow-billboards-yolo8-dataset/train/images
+val: roboflow-billboards-yolo8-dataset/valid/images
+test: roboflow-billboards-yolo8-dataset/test/images
 
 nc: 1
 names: ['Werbetafel frei']
