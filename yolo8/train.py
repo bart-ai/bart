@@ -59,7 +59,7 @@ results = model.train(
   # To enable training on Apple M1 and M2 chips,
   # you should specify 'mps' as your device when initiating the training process.
   # Comment out for automatic device selection
-  device="mps",
+  # device="mps",
 )
 
 # This exports the model in an onnx format, which is later used in the wb app.
