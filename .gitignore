@@ -3,3 +3,6 @@
 **/.DS_Store
 test-videos/out-*.mp4
 __pycache__/
+yolov8*.pt
+*.cache
+*.env*
