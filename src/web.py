@@ -15,18 +15,19 @@ TRANSFORMATION_LABELS = {
 st.title("bart: blocking ads in real time")
 
 
-@st.cache_resource
-def cached_get_model():
-    return core.Model(core.Model.detect_billboards)
+# @st.cache_resource
+# def cached_get_model():
+#     return core.Model(core.Model.detect_billboards)
 
 
-model = cached_get_model()
+# model = cached_get_model()
 time_in_frames = queue.Queue()
 
 
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
     start_time = time.time()
+    model = core.Model(core.Model.detect_faces)
     img = model.detect(img, transformation=transformation, confidence=confidence / 100)
     end_time = time.time()
     time_in_frames.put(end_time - start_time)
