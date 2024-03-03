@@ -14,13 +14,6 @@ TRANSFORMATION_LABELS = {
 
 st.title("bart: blocking ads in real time")
 
-
-# @st.cache_resource
-# def cached_get_model():
-#     return core.Model(core.Model.detect_billboards)
-
-
-# model = cached_get_model()
 time_in_frames = queue.Queue()
 
 
