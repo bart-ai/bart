@@ -12,11 +12,11 @@ class Model:
     detect_faces = 'face'
     detect_billboards = 'billboard'
 
-    def _load_onnx_model(self):
+    def _load_onnx_model(self, model_name):
         cwd = os.path.dirname(os.path.realpath(__file__))
         net = cv2.dnn.readNet(
             # YOLOv8 ONNX Model
-            f"{cwd}/model/billboard-detection/best.onnx",
+            f"{cwd}/model/billboard-detection/{model_name}.onnx",
         )
         dimensions = (IMAGE_SIZE, IMAGE_SIZE)
         model = (net, dimensions)
@@ -140,8 +140,8 @@ class Model:
             cvutils.blur(frame, rectangle)
 
 
-    def __init__(self, model_type='billboards'):
-        self.model = self._load_onnx_model() if model_type == Model.detect_billboards else self._load_caffe_model()
+    def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
+        self.model = self._load_onnx_model(model_name) if model_type == Model.detect_billboards else self._load_caffe_model()
         self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
         self.object = model_type
 
