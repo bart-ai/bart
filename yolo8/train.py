@@ -32,7 +32,7 @@ parser.add_argument(
     "-d",
     "--data",
     help="The relative path to the YOLOv8 dataset data.yaml file",
-    default="./datasets/roboflow-billboards-yolo8-dataset/data.yaml",
+    default="./datasets/data.yaml",
 )
 parser.add_argument(
     "-s",
