@@ -23,7 +23,7 @@ model = YOLO(f"{YOLO8_MODEL}.pt")
 print("[INFO] Model has loaded")
 
 # Config
-YOLO_DATA_YML_PATH = "./roboflow-billboards-yolo8-dataset/data.yaml"
+YOLO_DATA_YML_PATH = "./datasets/roboflow-billboards-yolo8-dataset/data.yaml"
 
 # Hyperparameters
 IMAGE_SIZE = 640

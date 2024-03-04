@@ -1,4 +1,4 @@
-path: ./
+path: ./datasets/
 train: roboflow-billboards-yolo8-dataset/train/images
 val: roboflow-billboards-yolo8-dataset/valid/images
 test: roboflow-billboards-yolo8-dataset/test/images
