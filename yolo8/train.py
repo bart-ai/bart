@@ -36,7 +36,6 @@ YOLO_DATA_YML_PATH = './roboflow-billboards-yolo8-dataset/data.yaml'
 # Hyperparameters
 IMAGE_SIZE=640
 EPOCHS=50
-PATIENCE=15
 
 print('[INFO] Start traning')
 
@@ -50,7 +49,6 @@ results = model.train(
    data=YOLO_DATA_YML_PATH,
    imgsz=IMAGE_SIZE,
    epochs=EPOCHS,
-   patience=PATIENCE,
    batch=-1,  # Use auto batch size
 
   # Load the hyperparameters from `tune.py`

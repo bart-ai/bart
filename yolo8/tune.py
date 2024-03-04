@@ -28,7 +28,6 @@ YOLO_DATA_YML_PATH = "./roboflow-billboards-yolo8-dataset/data.yaml"
 # Hyperparameters
 IMAGE_SIZE = 640
 EPOCHS = 50
-PATIENCE = 15
 TUNING_ITERATIONS = 5
 
 print("[INFO] Start tuning")
@@ -46,11 +45,9 @@ results = model.tune(
     data=YOLO_DATA_YML_PATH,
     imgsz=IMAGE_SIZE,
     epochs=EPOCHS,
-    patience=PATIENCE,
     batch=-1,  # Use auto batch size
     # To enable training on Apple M1 and M2 chips,
     # you should specify 'mps' as your device when initiating the training process.
     # Comment out for automatic device selection
     device="mps",
 )
-
