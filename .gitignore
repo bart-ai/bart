@@ -7,3 +7,4 @@ yolov8*.pt
 *.cache
 *.env*
 last.pt
+results.jpg
