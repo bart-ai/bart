@@ -41,7 +41,7 @@ webrtrc_ctx = webrtc_streamer(
     key="webrtc",
 )
 
-with st.expander("Configuration"):
+with st.expander("Configuration", expanded=True):
     time_container = st.empty()
     transformation = st.selectbox(
         "Transformation",
