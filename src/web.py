@@ -5,7 +5,7 @@ import av
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 
-import core
+from model import Model
 
 TRANSFORMATION_LABELS = {
     "detect": "Detect",
@@ -20,7 +20,7 @@ time_in_frames = queue.Queue()
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
     start_time = time.time()
-    model = core.Model(core.Model.detect_faces)
+    model = Model(Model.detect_faces)
     img = model.detect(img, transformation=transformation, confidence=confidence / 100)
     end_time = time.time()
     time_in_frames.put(end_time - start_time)
