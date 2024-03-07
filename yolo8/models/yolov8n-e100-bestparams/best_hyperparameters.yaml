@@ -1,0 +1,29 @@
+# 15/15 iterations complete ✅ (247883.78s)
+# Results saved to tune3
+# Best fitness=0.70958 observed at iteration 3
+# Best fitness metrics are {'metrics/precision(B)': 0.87411, 'metrics/recall(B)': 0.88, 'metrics/mAP50(B)': 0.87797, 'metrics/mAP50-95(B)': 0.69086, 'val/box_loss': 0.8214, 'val/cls_loss': 0.58853, 'val/dfl_loss': 1.16769, 'fitness': 0.70958}
+# Best fitness model is yolov8n-e1003
+# Best fitness hyperparameters are printed below.
+
+lr0: 0.00911
+lrf: 0.00995
+momentum: 0.96156
+weight_decay: 0.00049
+warmup_epochs: 3.0945
+warmup_momentum: 0.79239
+box: 7.21111
+cls: 0.44121
+dfl: 1.38829
+hsv_h: 0.01411
+hsv_s: 0.70051
+hsv_v: 0.38166
+degrees: 0.0
+translate: 0.09384
+scale: 0.5286
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.54234
+mosaic: 0.99175
+mixup: 0.0
+copy_paste: 0.0
