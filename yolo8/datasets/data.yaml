@@ -2,6 +2,7 @@ path: ./datasets/
 train: 
   - roboflow-billboards-yolo8-dataset/train/images
   - billboard-detection-yolo8-dataset/train/images
+  - negative-images/train/images
 val: 
   - roboflow-billboards-yolo8-dataset/valid/images
   - billboard-detection-yolo8-dataset/valid/images

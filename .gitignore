@@ -8,3 +8,5 @@ yolov8*.pt
 *.env*
 last.pt
 results.jpg
+instances_train2017.json
+negative-images/
