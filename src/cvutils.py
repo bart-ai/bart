@@ -19,7 +19,7 @@ def blur(
     frame,
     coords,
     border=True,
-    kernelsize=3,
+    kernelsize=15,
 ):
     # TODO: remove this failsafe!
     if any(coord <= 0 for coord in coords):
