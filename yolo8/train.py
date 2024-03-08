@@ -29,12 +29,6 @@ parser.add_argument(
     default="nano"
 )
 parser.add_argument(
-    "-d",
-    "--data",
-    help="The relative path to the YOLOv8 dataset data.yaml file",
-    default="./datasets/data.yaml",
-)
-parser.add_argument(
     "-s",
     "--imgsz",
     help="The size of the training dataset images",
@@ -88,7 +82,7 @@ print("[INFO] Start traning")
 results = model.train(
     name=experiment_name,
     project="./models",
-    data=args.data,
+    data="./datasets/data.yaml",
     imgsz=args.imgsz,
     epochs=args.epochs,
     batch=-1,  # Use auto batch size

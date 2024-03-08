@@ -30,12 +30,6 @@ parser.add_argument(
     default="nano",
 )
 parser.add_argument(
-    "-d",
-    "--data",
-    help="The relative path to the YOLOv8 dataset data.yaml file",
-    default="./datasets/data.yaml",
-)
-parser.add_argument(
     "-s",
     "--imgsz",
     help="The size of the training dataset images",
@@ -81,7 +75,7 @@ results = model.tune(
     iterations=args.iterations,
     name=experiment_name,
     project="./tuning-models",
-    data=args.data,
+    data="./datasets/data.yaml",
     imgsz=args.imgsz,
     epochs=args.epochs,
     batch=-1,  # Use auto batch size

@@ -3,4 +3,5 @@ torch==2.1.1
 torchvision==0.16.1
 comet-ml==3.35.3
 pycocotools==2.0.7
+roboflow==1.1.22
 tqdm==4.65.0
