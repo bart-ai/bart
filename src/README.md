@@ -14,4 +14,4 @@ $ streamlit run web.py
 
 On each push to `master` the CI automatically deploys the new version to https://bart.fly.dev/, by running the project [Dockerfile](../Dockerfile) and reading the specs from the project [fly.toml](../fly.toml).
 
-To manually deploy, install the [fly command-line tool](https://fly.io/docs/hands-on/install-flyctl/) and run `fly deploy` after authentication.
+To manually deploy, install the [fly command-line tool](https://fly.io/docs/hands-on/install-flyctl/) and run `flyctl deploy` after authentication.
