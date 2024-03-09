@@ -16,4 +16,5 @@ EXPOSE 8080
 
 HEALTHCHECK CMD curl --fail http://localhost:8080/_stcore/health
 
-ENTRYPOINT ["streamlit", "run", "./src/web.py", "--server.port=8080", "--server.address=0.0.0.0"]
+WORKDIR "./src"
+ENTRYPOINT ["streamlit", "run", "./web.py", "--server.port=8080", "--server.address=0.0.0.0"]
