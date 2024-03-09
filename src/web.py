@@ -4,8 +4,9 @@ import time
 
 import av
 import streamlit as st
-from model import Model
 from streamlit_webrtc import webrtc_streamer
+
+from model import Model
 
 TRANSFORMATION_LABELS = {
     "detect": "Detect",
@@ -25,6 +26,10 @@ configuration_panel = st.expander("Configuration", expanded=True)
 # We need a thread safe queue to store the frame processing time results
 # which are processed in a different thread.
 time_in_frames = queue.Queue()
+# This queue is used to store the detections that we are doing en each frame
+# it's used to display the area of ads seen as a % of the total area of the video.
+current_frame_percentage_of_ads = queue.Queue()
+total_frames = 0
 
 # We define the model selector before we set up the rest of the app as
 # we need it for the cache key
@@ -53,9 +58,10 @@ else:
 def call_detect(frame):
     img = frame.to_ndarray(format="bgr24")
     start_time = time.time()
-    img = model.detect(img, transformation=transformation, confidence=confidence / 100)
+    frame, detection_area_percentage = model.detect(img, transformation=transformation, confidence=confidence / 100)
     end_time = time.time()
     time_in_frames.put(end_time - start_time)
+    current_frame_percentage_of_ads.put(detection_area_percentage)
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -78,6 +84,8 @@ with webrtc_container:
 # Fill out the rest of the configuration panel
 with configuration_panel:
     time_container = st.empty()
+    area_percentage_container = st.empty()
+    total_frames_processed_container = st.empty()
     transformation = st.selectbox(
         "Transformation",
         options=("detect", "blur"),
@@ -91,5 +99,9 @@ with configuration_panel:
 # Everything after this block won't be run.
 # Make sure this is at the end of the file.
 while webrtrc_ctx.state.playing:
+    total_frames += 1
     result = time_in_frames.get()
+    last_detection_area_percentage = current_frame_percentage_of_ads.get()
     time_container.text(f"Frame processing time: {result:.3f} seconds")
+    area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
+    total_frames_processed_container.text(f"Total frames processed: {total_frames}")
