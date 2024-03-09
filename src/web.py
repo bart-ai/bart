@@ -22,6 +22,7 @@ billboard_models = [
 st.title("bart: blocking ads in real time")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
+stats_panel = st.expander("Estadísticas", expanded=False)
 
 # We need a thread safe queue to store the frame processing time results
 # which are processed in a different thread.
@@ -30,6 +31,8 @@ time_in_frames = queue.Queue()
 # it's used to display the area of ads seen as a % of the total area of the video.
 current_frame_percentage_of_ads = queue.Queue()
 total_frames = 0
+rolling_average_processing_time = 0
+rolling_average_percentage_of_ads = 0
 
 # We define the model selector before we set up the rest of the app as
 # we need it for the cache key
@@ -83,9 +86,6 @@ with webrtc_container:
 
 # Fill out the rest of the configuration panel
 with configuration_panel:
-    time_container = st.empty()
-    area_percentage_container = st.empty()
-    total_frames_processed_container = st.empty()
     transformation = st.selectbox(
         "Transformation",
         options=("detect", "blur"),
@@ -95,13 +95,22 @@ with configuration_panel:
         "Detection score", min_value=0, max_value=100, value=80, step=5
     )
 
+with stats_panel:
+    time_container = st.empty()
+    area_percentage_container = st.empty()
+    total_frames_processed_container = st.empty()
+
 # We show the processing time per frame with a while True loop
 # Everything after this block won't be run.
 # Make sure this is at the end of the file.
 while webrtrc_ctx.state.playing:
     total_frames += 1
-    result = time_in_frames.get()
+    frame_processed_in = time_in_frames.get()
     last_detection_area_percentage = current_frame_percentage_of_ads.get()
-    time_container.text(f"Frame processing time: {result:.3f} seconds")
+    rolling_average_percentage_of_ads = (
+        (rolling_average_percentage_of_ads * (total_frames - 1))
+        + last_detection_area_percentage
+    ) / total_frames
+    time_container.text(f"Frame processing time: {frame_processed_in:.3f} seconds")
     area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
     total_frames_processed_container.text(f"Total frames processed: {total_frames}")
