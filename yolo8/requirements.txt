@@ -5,6 +5,7 @@ comet-ml==3.35.3
 pycocotools==2.0.7
 roboflow==1.1.22
 tqdm==4.65.0
+ray==2.9.3
 onnx==1.15.0
 onnxruntime==1.17.1
 onnxsim==0.4.36

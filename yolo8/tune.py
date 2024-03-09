@@ -49,6 +49,12 @@ parser.add_argument(
     type=int,
     default=50,
 )
+parser.add_argument(
+    "-r",
+    "--raytune",
+    help="Use raytune on the tuning process",
+    action="store_true"
+)
 parser.add_argument("-n", "--name", help="The name of the experiment")
 args = parser.parse_args()
 
@@ -65,7 +71,9 @@ experiment_name = None
 if args.name:
     experiment_name = f"{args.name}"
 else:
-    experiment_name = f"{YOLO8_MODELS.get(args.model, 'custom')}-i{args.iterations}-e{args.epochs}"
+    experiment_name = (
+        f"{YOLO8_MODELS.get(args.model, 'custom')}-i{args.iterations}-e{args.epochs}{args.raytune and '-ray'}"
+    )
 
 # Tuning.
 # Once the best hyperparams are found, we can load the `best_hyperparameters.yaml`
@@ -75,8 +83,9 @@ results = model.tune(
     iterations=args.iterations,
     name=experiment_name,
     project="./tuning-models",
-    data="./datasets/data.yaml",
+    data=os.path.abspath("./datasets/data.yaml"),
     imgsz=args.imgsz,
     epochs=args.epochs,
     batch=-1,  # Use auto batch size
+    use_ray=args.raytune,
 )
