@@ -101,6 +101,9 @@ with stats_panel:
     time_container = st.empty()
     area_percentage_container = st.empty()
     total_frames_processed_container = st.empty()
+
+
+    profiling_toggle = st.toggle('Enable profiling')
     area_line_chart_title = st.empty()
     area_line_chart_title.text("Percentage of area covered by bounding boxes")
     area_line_chart = st.line_chart(pd.DataFrame(area_detection_percentage_df, columns=['percentage']))
@@ -116,8 +119,10 @@ while webrtrc_ctx.state.playing:
         (rolling_average_percentage_of_ads * (total_frames - 1))
         + last_detection_area_percentage
     ) / total_frames
-    area_detection_percentage_df = pd.concat([area_detection_percentage_df, pd.DataFrame([{"percentage": last_detection_area_percentage}])], ignore_index=True)
-    area_line_chart.line_chart(area_detection_percentage_df)
+
+    if profiling_toggle:
+        area_detection_percentage_df = pd.concat([area_detection_percentage_df, pd.DataFrame([{"percentage": last_detection_area_percentage}])], ignore_index=True)
+        area_line_chart.line_chart(area_detection_percentage_df)
 
     time_container.text(f"Frame processing time: {frame_processed_in:.3f} seconds")
     area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
