@@ -81,6 +81,8 @@ else:
         f"i{args.iterations}",  # The number of tuning iterations
         f"e{args.epochs}",  # The number of epochs
     ]
+    if args.dataname:
+        metadata.append(args.dataname) # The dataset used
     if args.raytune:
         metadata.append("ray") # If raytune was used
     experiment_name = "-".join(metadata)
