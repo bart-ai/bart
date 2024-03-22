@@ -104,4 +104,4 @@ results = model.train(
 
 # This exports the model in an onnx format, which is later used in the web app.
 # You can also export an exisiting model result using the convert_to_onnx.py script.
-model.export(format='onnx', simplify=True, imgsz=[args.imgsz, args.imgsz])
+model.export(format='onnx', imgsz=[args.imgsz, args.imgsz])
