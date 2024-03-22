@@ -85,6 +85,10 @@ class Model:
         for i in range(len(result_boxes)):
             index = result_boxes[i]
             box = boxes[index]
+            if (self.is_openimages):
+                class_id = class_ids[index]
+                class_label = cvutils.OPENIMAGES_CLASSES[class_id]
+                if class_label != "Billboard": continue
             # TODO: investigate why some of this coordinates might be negative
             startX = round(box[0] * scale)
             startY = round(box[1] * scale)
@@ -142,6 +146,7 @@ class Model:
 
     def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
         self.model = self._load_onnx_model(model_name) if model_type == Model.detect_billboards else self._load_caffe_model()
+        self.is_openimages = "oiv7" in model_name
         self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
         self.object = model_type
 
