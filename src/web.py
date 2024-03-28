@@ -24,8 +24,6 @@ st.title("bart: blocking ads in real time")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
 
-
-# TODO: only dequeu items if the panel is open.
 stats_panel = st.expander("Estadísticas", expanded=True)
 
 area_detection_percentage_df = pd.DataFrame(columns=['percentage'])
@@ -131,6 +129,3 @@ with stats_panel:
             time_container.text(f"Frame processing time: {frame_processed_in:.3f} seconds")
             area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
             total_frames_processed_container.text(f"Total frames processed: {total_frames}")
-
-# TODO: https://github.com/bart-ai/bart/issues/35
-# clonar el repo y meter nuestros modelos, detect, etc. Para ver si mejora o no.
