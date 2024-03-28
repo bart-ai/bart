@@ -23,7 +23,11 @@ billboard_models = [
 st.title("bart: blocking ads in real time")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
+
+
+# TODO: only dequeu items if the panel is open.
 stats_panel = st.expander("Estadísticas", expanded=True)
+
 area_detection_percentage_df = pd.DataFrame(columns=['percentage'])
 
 # We need a thread safe queue to store the frame processing time results
@@ -111,19 +115,26 @@ with stats_panel:
 # We show the processing time per frame with a while True loop
 # Everything after this block won't be run.
 # Make sure this is at the end of the file.
-while webrtrc_ctx.state.playing:
-    total_frames += 1
-    frame_processed_in = time_in_frames.get()
-    last_detection_area_percentage = current_frame_percentage_of_ads.get()
-    rolling_average_percentage_of_ads = (
-        (rolling_average_percentage_of_ads * (total_frames - 1))
-        + last_detection_area_percentage
-    ) / total_frames
+with stats_panel:
+    while webrtrc_ctx.state.playing:
+        total_frames += 1
+        frame_processed_in = time_in_frames.get()
+        last_detection_area_percentage = current_frame_percentage_of_ads.get()
+        rolling_average_percentage_of_ads = (
+            (rolling_average_percentage_of_ads * (total_frames - 1))
+            + last_detection_area_percentage
+        ) / total_frames
 
-    if profiling_toggle:
-        area_detection_percentage_df = pd.concat([area_detection_percentage_df, pd.DataFrame([{"percentage": last_detection_area_percentage}])], ignore_index=True)
-        area_line_chart.line_chart(area_detection_percentage_df)
+        if profiling_toggle:
+            area_detection_percentage_df = pd.concat([area_detection_percentage_df, pd.DataFrame([{"percentage": last_detection_area_percentage}])], ignore_index=True)
+            area_line_chart.line_chart(area_detection_percentage_df)
 
-    time_container.text(f"Frame processing time: {frame_processed_in:.3f} seconds")
-    area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
-    total_frames_processed_container.text(f"Total frames processed: {total_frames}")
+        time_container.text(f"Frame processing time: {frame_processed_in:.3f} seconds")
+        area_percentage_container.text(f"Area covered by bounding boxes: {last_detection_area_percentage:.2f}%")
+        total_frames_processed_container.text(f"Total frames processed: {total_frames}")
+
+
+# TODO: dropdown para ver métrica en el gráfico.
+
+# TODO: https://github.com/bart-ai/bart/issues/35
+# clonar el repo y meter nuestros modelos, detect, etc. Para ver si mejora o no.

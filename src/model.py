@@ -63,6 +63,10 @@ class Model:
         scores = []
         class_ids = []
 
+        # Here we store the % of the area that is covered by the detection
+        # relative to the whole image area.
+        detection_area_percentage = []
+
         # Iterate through output to collect bounding boxes, confidence scores, and class IDs
         for i in range(rows):
             classes_scores = outputs[0][i][4:]
@@ -92,8 +96,13 @@ class Model:
             endY = round((box[1] + box[3]) * scale)
             self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
 
-        # TODO return the detection area percentage for each detection.
-        return frame, []
+            bounding_box_area = (endX - startX) * (endY - startY)
+            image_area = height * width
+            detection_area_percentage.append(
+                (bounding_box_area / image_area) * 100
+            )
+
+        return frame, sum(detection_area_percentage)
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
