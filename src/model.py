@@ -103,7 +103,7 @@ class Model:
                 "endY": endY
             })
 
-        return frame, calculate_total_area_covered_by_bboxes(bounding_boxes)
+        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (height * width)) * 100
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
@@ -150,7 +150,7 @@ class Model:
                 transformation,
             )
 
-        return frame, calculate_total_area_covered_by_bboxes(bounding_boxes)
+        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (frame.shape[0] * frame.shape[1])) * 100
 
     def transform(self, frame, rectangle, score, transformation):
         if transformation == "detect":
