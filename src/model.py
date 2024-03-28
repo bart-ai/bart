@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 import cvutils
+from utils import calculate_total_area_covered_by_bboxes
 
 IMAGE_SIZE = 640
 
@@ -63,9 +64,9 @@ class Model:
         scores = []
         class_ids = []
 
-        # Here we store the % of the area that is covered by the detection
-        # relative to the whole image area.
-        detection_area_percentage = []
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
 
         # Iterate through output to collect bounding boxes, confidence scores, and class IDs
         for i in range(rows):
@@ -95,14 +96,14 @@ class Model:
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
             self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
+            bounding_boxes.append({
+                "startX": startX,
+                "startY": startY,
+                "endX": endX,
+                "endY": endY
+            })
 
-            bounding_box_area = (endX - startX) * (endY - startY)
-            image_area = height * width
-            detection_area_percentage.append(
-                (bounding_box_area / image_area) * 100
-            )
-
-        return frame, sum(detection_area_percentage)
+        return frame, calculate_total_area_covered_by_bboxes(bounding_boxes)
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
@@ -113,9 +114,9 @@ class Model:
         # Run the model itself
         detections = net.forward()
 
-        # Here we store the % of the area that is covered by the detection
-        # relative to the whole image area.
-        detection_area_percentage = []
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
 
         # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
         # loop over the detections
@@ -135,11 +136,12 @@ class Model:
                 detections[0, 0, i, 3:7] * np.array([width, height, width, height])
             ).astype("int")
 
-            bounding_box_area = (endX - startX) * (endY - startY)
-            image_area = height * width
-            detection_area_percentage.append(
-                (bounding_box_area / image_area) * 100
-            )
+            bounding_boxes.append({
+                "startX": startX,
+                "startY": startY,
+                "endX": endX,
+                "endY": endY
+            })
 
             self.transform(
                 frame,
@@ -148,10 +150,7 @@ class Model:
                 transformation,
             )
 
-        # Here we are not taking into account that the bounding boxes can overlap
-        # so if we have overlapping bounding boxes the detection area percentage
-        # might be a bit higher than reality.
-        return frame, sum(detection_area_percentage)
+        return frame, calculate_total_area_covered_by_bboxes(bounding_boxes)
 
     def transform(self, frame, rectangle, score, transformation):
         if transformation == "detect":
