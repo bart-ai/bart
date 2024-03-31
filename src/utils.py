@@ -4,7 +4,6 @@ def calculate_total_area_covered_by_bboxes(bounding_boxes):
     visited = set()
 
     for bbox in bounding_boxes:
-        print('processing bbox', bbox)
         area = (bbox["endX"] - bbox["startX"]) * (bbox["endY"] - bbox["startY"])
         total_area += area
 

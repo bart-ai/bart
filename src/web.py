@@ -35,8 +35,6 @@ time_in_frames = queue.Queue()
 # it's used to display the area of ads seen as a % of the total area of the video.
 current_frame_percentage_of_ads = queue.Queue()
 total_frames = 0
-rolling_average_processing_time = 0
-rolling_average_percentage_of_ads = 0
 
 # We define the model selector before we set up the rest of the app as
 # we need it for the cache key
@@ -117,10 +115,6 @@ with stats_panel:
             total_frames += 1
             frame_processed_in = time_in_frames.get()
             last_detection_area_percentage = current_frame_percentage_of_ads.get()
-            rolling_average_percentage_of_ads = (
-                (rolling_average_percentage_of_ads * (total_frames - 1))
-                + last_detection_area_percentage
-            ) / total_frames
 
             if profiling_toggle:
                 area_detection_percentage_df = pd.concat([area_detection_percentage_df, pd.DataFrame([{"percentage": last_detection_area_percentage}])], ignore_index=True)
