@@ -74,6 +74,11 @@ class Model:
                     outputs[0][i][2],
                     outputs[0][i][3],
                 ]
+                # OPENIMAGES CLASSES INDEXES: https://docs.ultralytics.com/datasets/detect/open-images-v7/
+                # 46 -> Billboard
+                # 264 -> Human face
+                if (self.is_openimages and maxClassIndex != 46):
+                    continue
                 boxes.append(box)
                 scores.append(maxScore)
                 class_ids.append(maxClassIndex)
@@ -85,10 +90,6 @@ class Model:
         for i in range(len(result_boxes)):
             index = result_boxes[i]
             box = boxes[index]
-            if (self.is_openimages):
-                class_id = class_ids[index]
-                class_label = cvutils.OPENIMAGES_CLASSES[class_id]
-                if class_label != "Billboard": continue
             # TODO: investigate why some of this coordinates might be negative
             startX = round(box[0] * scale)
             startY = round(box[1] * scale)
