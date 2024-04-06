@@ -9,4 +9,4 @@ args = parser.parse_args()
 model = YOLO(args.model)
 
 # export the model to ONNX format
-model.export(format='onnx', simplify=True, imgsz=[640, 640])
+model.export(format='onnx', imgsz=[640, 640])

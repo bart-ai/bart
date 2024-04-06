@@ -4,6 +4,7 @@ import os
 
 import requests
 from pycocotools.coco import COCO
+from tqdm import tqdm
 
 # We need to exclude everything that __might__ have a billboard in it
 # http://github.com/ultralytics/yolov5/blob/df48c205c5fc7be5af6b067da1f7cb3efb770d88/data/coco.yaml
@@ -42,7 +43,7 @@ bg_images = coco.loadImgs(bg_img_ids)
 
 os.makedirs(os.path.join(*DIRECTORY_STRUCTURE), exist_ok=True)
 
-for im in bg_images[:NUM_IMAGES]:
+for im in tqdm(bg_images[:NUM_IMAGES]):
     img_data = requests.get(im["coco_url"]).content
     with open(os.path.join(*[*DIRECTORY_STRUCTURE, im["file_name"]]), "wb") as handler:
         handler.write(img_data)
