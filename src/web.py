@@ -12,7 +12,10 @@ TRANSFORMATION_LABELS = {
     "blur": "Blur",
 }
 
-BILLBOARD_MODELS_DIR = "model/billboard-detection"
+BILLBOARD_MODELS_DIR = "./model/billboard-detection"
+cwd = os.path.dirname(os.path.realpath(__file__))
+print('CWD')
+print(cwd)
 billboard_models = [
     model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
