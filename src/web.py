@@ -13,7 +13,7 @@ TRANSFORMATION_LABELS = {
     "blur": "Blur",
 }
 
-BILLBOARD_MODELS_DIR = "./model/billboard-detection"
+BILLBOARD_MODELS_DIR = "model/billboard-detection"
 cwd = os.path.dirname(os.path.realpath(__file__))
 # Print the entire contsnts of the current working directory
 print(f"Current working directory: {cwd}\nContents: {os.listdir(cwd)}")
