@@ -13,6 +13,7 @@ class Model:
     detect_billboards = 'billboard'
 
     def _load_onnx_model(self, model_name):
+        print(cwd)
         cwd = os.path.dirname(os.path.realpath(__file__))
         net = cv2.dnn.readNet(
             # YOLOv8 ONNX Model
