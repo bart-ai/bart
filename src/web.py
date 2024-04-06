@@ -22,7 +22,7 @@ print(f"\nContents: {os.listdir('./')}")
 
 
 billboard_models = [
-    model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
+    # model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
 
 # The general layout of the app: title -> webcam -> config panel
