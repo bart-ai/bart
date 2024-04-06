@@ -4,8 +4,9 @@ import time
 
 import av
 import streamlit as st
-from model import Model
 from streamlit_webrtc import webrtc_streamer
+
+from model import Model
 
 TRANSFORMATION_LABELS = {
     "detect": "Detect",
@@ -14,8 +15,8 @@ TRANSFORMATION_LABELS = {
 
 BILLBOARD_MODELS_DIR = "./model/billboard-detection"
 cwd = os.path.dirname(os.path.realpath(__file__))
-print('CWD')
-print(cwd)
+# Print the entire contsnts of the current working directory
+print(f"Current working directory: {cwd}\nContents: {os.listdir(cwd)}")
 billboard_models = [
     model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
