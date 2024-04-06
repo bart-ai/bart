@@ -74,6 +74,11 @@ class Model:
                     outputs[0][i][2],
                     outputs[0][i][3],
                 ]
+                # OPENIMAGES CLASSES INDEXES: https://docs.ultralytics.com/datasets/detect/open-images-v7/
+                # 46 -> Billboard
+                # 264 -> Human face
+                if (self.is_openimages and maxClassIndex != 46):
+                    continue
                 boxes.append(box)
                 scores.append(maxScore)
                 class_ids.append(maxClassIndex)
@@ -142,6 +147,7 @@ class Model:
 
     def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
         self.model = self._load_onnx_model(model_name) if model_type == Model.detect_billboards else self._load_caffe_model()
+        self.is_openimages = "oiv7" in model_name
         self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
         self.object = model_type
 
