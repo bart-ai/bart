@@ -19,7 +19,7 @@ BILLBOARD_MODELS_DIR = f"{cwd}/model/billboard-detection"
 # print(f"Current working directory: {cwd}\nContents: {os.listdir(cwd)}")
 print(BILLBOARD_MODELS_DIR)
 print(f"\nContents: {os.listdir('./')}")
-# print(f"\nContents: {os.listdir('model')}")
+print(f"\nContents: {os.listdir(BILLBOARD_MODELS_DIR)}")
 
 
 
