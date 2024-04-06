@@ -17,6 +17,10 @@ BILLBOARD_MODELS_DIR = "model/billboard-detection"
 cwd = os.path.dirname(os.path.realpath(__file__))
 # Print the entire contsnts of the current working directory
 print(f"Current working directory: {cwd}\nContents: {os.listdir(cwd)}")
+print(f"\nContents: {os.listdir('./')}")
+
+
+
 billboard_models = [
     model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
