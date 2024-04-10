@@ -25,12 +25,9 @@ webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
 stats_panel = st.container(border=True)
 
-# We need a thread safe queue to store the frame processing time results
+# We need a thread safe queue to store the frame metadata results
 # which are processed in a different thread.
-time_in_frames = queue.Queue()
-# This queue is used to store the detections that we are doing en each frame
-# it's used to display the area of ads seen as a % of the total area of the video.
-current_frame_percentage_of_ads = queue.Queue()
+stats_queue = queue.Queue()
 total_frames = 0
 
 # We define the model selector before we set up the rest of the app as
@@ -62,8 +59,8 @@ def call_detect(frame):
     start_time = time.time()
     frame, detection_area_percentage = model.detect(img, transformation=transformation, confidence=confidence / 100)
     end_time = time.time()
-    time_in_frames.put(end_time - start_time)
-    current_frame_percentage_of_ads.put(detection_area_percentage)
+    frame_processed_in = end_time - start_time
+    stats_queue.put([frame_processed_in, detection_area_percentage])
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
@@ -109,8 +106,7 @@ with stats_panel:
 
         while webrtrc_ctx.state.playing:
             total_frames += 1
-            frame_processed_in = time_in_frames.get()
-            last_detection_area_percentage = current_frame_percentage_of_ads.get()
+            [frame_processed_in, last_detection_area_percentage] = stats_queue.get()
 
             time_line_chart.add_rows(pd.DataFrame([{"time": frame_processed_in}]))
             area_line_chart.add_rows(pd.DataFrame([{"percentage": last_detection_area_percentage}]))
