@@ -23,7 +23,7 @@ billboard_models = [
 st.title("bart: blocking ads in real time")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
-stats_panel = st.expander("Estadísticas", expanded=True)
+stats_panel = st.container(border=True)
 
 # We need a thread safe queue to store the frame processing time results
 # which are processed in a different thread.
