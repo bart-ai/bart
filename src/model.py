@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 import cvutils
+from utils import calculate_total_area_covered_by_bboxes
 
 IMAGE_SIZE = 640
 
@@ -63,6 +64,10 @@ class Model:
         scores = []
         class_ids = []
 
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
+
         # Iterate through output to collect bounding boxes, confidence scores, and class IDs
         for i in range(rows):
             classes_scores = outputs[0][i][4:]
@@ -96,8 +101,14 @@ class Model:
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
             self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
+            bounding_boxes.append({
+                "startX": startX,
+                "startY": startY,
+                "endX": endX,
+                "endY": endY
+            })
 
-        return frame
+        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (height * width)) * 100
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
@@ -107,6 +118,10 @@ class Model:
 
         # Run the model itself
         detections = net.forward()
+
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
 
         # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
         # loop over the detections
@@ -125,6 +140,14 @@ class Model:
             (startX, startY, endX, endY) = (
                 detections[0, 0, i, 3:7] * np.array([width, height, width, height])
             ).astype("int")
+
+            bounding_boxes.append({
+                "startX": startX,
+                "startY": startY,
+                "endX": endX,
+                "endY": endY
+            })
+
             self.transform(
                 frame,
                 (startX, startY, endX, endY),
@@ -132,7 +155,7 @@ class Model:
                 transformation,
             )
 
-        return frame
+        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (frame.shape[0] * frame.shape[1])) * 100
 
     def transform(self, frame, rectangle, score, transformation):
         if transformation == "detect":
@@ -152,4 +175,5 @@ class Model:
         self.object = model_type
 
     def detect(self, frame, transformation = "detect", confidence = 0.8):
-        self.detect(frame, transformation, confidence)
+        frame, detection_area_percentage = self.detect(frame, transformation, confidence)
+        return frame, detection_area_percentage
