@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 
 import cvutils
-from utils import calculate_total_area_covered_by_bboxes
 
 IMAGE_SIZE = 640
 
@@ -100,21 +99,22 @@ class Model:
             startY = round(box[1] * scale)
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
-            self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
-            bounding_boxes.append({
-                "startX": startX,
-                "startY": startY,
-                "endX": endX,
-                "endY": endY
-            })
+            bbox = (startX, startY, endX, endY)
+            self.transform(frame, bbox, scores[index], transformation)
+            bounding_boxes.append(bbox)
 
-        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (height * width)) * 100
+        detection_area = cvutils.calculate_total_area_covered_by_bboxes(bounding_boxes)
+        detection_area_percentage = detection_area / (height * width) * 100
+
+        return frame, detection_area_percentage
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
         net, net_dimensions = self.model
         blob = cv2.dnn.blobFromImage(frame, 1.0, net_dimensions)
         net.setInput(blob)
+
+        [height, width, _] = frame.shape
 
         # Run the model itself
         detections = net.forward()
@@ -136,26 +136,17 @@ class Model:
 
             # compute the (x, y)-coordinates of the bounding box for the object
             # multiply by the frame size to get the actual coordinates
-            height, width = frame.shape[:2]
-            (startX, startY, endX, endY) = (
+            bbox = tuple((
                 detections[0, 0, i, 3:7] * np.array([width, height, width, height])
-            ).astype("int")
+            ).astype("int"))
 
-            bounding_boxes.append({
-                "startX": startX,
-                "startY": startY,
-                "endX": endX,
-                "endY": endY
-            })
+            self.transform(frame, bbox, detection_confidence, transformation)
+            bounding_boxes.append(bbox)
 
-            self.transform(
-                frame,
-                (startX, startY, endX, endY),
-                detection_confidence,
-                transformation,
-            )
+        detection_area = cvutils.calculate_total_area_covered_by_bboxes(bounding_boxes)
+        detection_area_percentage = detection_area / (height * width) * 100
 
-        return frame, (calculate_total_area_covered_by_bboxes(bounding_boxes) / (frame.shape[0] * frame.shape[1])) * 100
+        return frame, detection_area_percentage
 
     def transform(self, frame, rectangle, score, transformation):
         if transformation == "detect":
