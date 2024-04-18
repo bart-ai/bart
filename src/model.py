@@ -6,6 +6,7 @@ import numpy as np
 import cvutils
 
 IMAGE_SIZE = 640
+TRANSFORMATIONS = ['detect', 'blur', 'inpaint']
 
 class Model:
 
@@ -157,6 +158,8 @@ class Model:
             )
         elif transformation == "blur":
             cvutils.blur(frame, rectangle)
+        elif transformation == "inpaint":
+            cvutils.inpaint(frame, rectangle)
 
 
     def __init__(self, model_type="billboards", model_name="yolov8n-e50"):

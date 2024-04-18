@@ -7,12 +7,7 @@ import pandas as pd
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 
-from model import Model
-
-TRANSFORMATION_LABELS = {
-    "detect": "Detect",
-    "blur": "Blur",
-}
+from model import TRANSFORMATIONS, Model
 
 BILLBOARD_MODELS_DIR = "model/billboard-detection"
 billboard_models = [
@@ -84,8 +79,8 @@ with webrtc_container:
 with configuration_panel:
     transformation = st.selectbox(
         "Transformation",
-        options=("detect", "blur"),
-        format_func=lambda x: TRANSFORMATION_LABELS[x],
+        options=TRANSFORMATIONS,
+        format_func=lambda x: x.capitalize(),
     )
     confidence = st.slider(
         "Detection score", min_value=0, max_value=100, value=80, step=5
