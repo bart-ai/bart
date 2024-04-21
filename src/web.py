@@ -49,14 +49,19 @@ else:
     st.session_state[cache_key] = model
 
 # Process the frame on a different thread
+# As errors don't bubble up from this thread, it's prudent to to keep track of
+#   them by printing them
 def call_detect(frame):
-    img = frame.to_ndarray(format="bgr24")
-    start_time = time.time()
-    frame, detection_area_percentage = model.detect(img, transformation=transformation, confidence=confidence / 100)
-    end_time = time.time()
-    frame_processed_in = end_time - start_time
-    stats_queue.put([frame_processed_in, detection_area_percentage])
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
+    try:
+        img = frame.to_ndarray(format="bgr24")
+        start_time = time.time()
+        frame, detection_area_percentage = model.detect(img, transformation=transformation, confidence=confidence / 100)
+        end_time = time.time()
+        frame_processed_in = end_time - start_time
+        stats_queue.put([frame_processed_in, detection_area_percentage])
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
+    except Exception as e:
+        print(f"Error on detection thread: {e}")
 
 
 # Place the webrtc_streamer on our empty container
