@@ -164,9 +164,13 @@ class Model:
 
 
     def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
-        self.model = self._load_onnx_model(model_name) if model_type == Model.detect_billboards else self._load_caffe_model()
+        if model_type == Model.detect_billboards:
+            self.model = self._load_onnx_model(model_name)
+            self.detect = self._detect_onnx_model
+        else:
+            self.model = self._load_caffe_model()
+            self.detect = self._detect_caffe_model
         self.is_openimages = "oiv7" in model_name
-        self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
         self.object = model_type
 
     def detect(self, frame, transformation = "detect", confidence = 0.8):
