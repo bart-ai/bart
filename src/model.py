@@ -96,12 +96,25 @@ class Model:
         for i in range(len(result_boxes)):
             index = result_boxes[i]
             box = boxes[index]
-            # TODO: investigate why some of this coordinates might be negative
+
             startX = round(box[0] * scale)
             startY = round(box[1] * scale)
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
+
+            # Some coordinates might be out of bounds
+            # We clamp them to the image dimensions
+            startX = max(0, min(startX, width-1))
+            startY = max(0, min(startY, height-1))
+            endX = max(0, min(endX, width-1))
+            endY = max(0, min(endY, height-1))
+
+            # Skip if the bounding box is too small
+            if (startX == endX or startY == endY):
+                continue
+
             bbox = (startX, startY, endX, endY)
+
             self.transform(frame, bbox, scores[index], transformation)
             bounding_boxes.append(bbox)
 

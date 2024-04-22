@@ -22,12 +22,8 @@ def blur(
     coords,
     kernelsize=15,
 ):
-    # TODO: remove this failsafe!
-    if any(coord <= 0 for coord in coords):
-        return
     (startX, startY, endX, endY) = coords
     roi = frame[startY:endY, startX:endX]
-    # TODO: investigate cv2.bilateralFilter
     blurred_roi = cv2.GaussianBlur(roi, (kernelsize, kernelsize), 0)
     frame[startY:endY, startX:endX] = blurred_roi
 
