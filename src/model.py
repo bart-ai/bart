@@ -5,8 +5,9 @@ import numpy as np
 
 import cvutils
 
-IMAGE_SIZE = 640
 TRANSFORMATIONS = ['detect', 'blur', 'inpaint']
+FACE_MODEL_IMAGE_SIZE = 300
+BILLBOARD_MODEL_IMAGE_SIZE = 640
 
 class Model:
 
@@ -19,7 +20,7 @@ class Model:
             # YOLOv8 ONNX Model
             f"{cwd}/model/billboard-detection/{model_name}.onnx",
         )
-        dimensions = (IMAGE_SIZE, IMAGE_SIZE)
+        dimensions = (BILLBOARD_MODEL_IMAGE_SIZE, BILLBOARD_MODEL_IMAGE_SIZE)
         model = (net, dimensions)
         return model
 
@@ -30,7 +31,7 @@ class Model:
             f"{cwd}/model/face-detection/res10_300x300_ssd_iter_140000.caffemodel",
             f"{cwd}/model/face-detection/deploy.prototxt",
         )
-        dimensions = (IMAGE_SIZE, IMAGE_SIZE)
+        dimensions = (FACE_MODEL_IMAGE_SIZE, FACE_MODEL_IMAGE_SIZE)
         model = (net, dimensions)
         return model
 
@@ -48,7 +49,7 @@ class Model:
         image[0:height, 0:width] = original_image
 
         # Calculate scale factor
-        scale = length / IMAGE_SIZE
+        scale = length / BILLBOARD_MODEL_IMAGE_SIZE
 
         # Preprocess the image and prepare blob for model
         blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=dimensions, swapRB=True)
