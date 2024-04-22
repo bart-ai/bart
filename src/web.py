@@ -15,7 +15,7 @@ billboard_models = [
 ]
 
 # The general layout of the app: title -> webcam -> config panel
-st.title("bart: blocking ads in real time")
+st.title("bart: blocking ads in real time", help="[source code](https://github.com/bart-ai/bart)")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
 stats_panel = st.container(border=True)
