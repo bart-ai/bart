@@ -1,4 +1,6 @@
 import cv2
+import numpy as np
+
 
 # Draw a rectangle on the frame, with optional text
 def draw(frame, rectangle, text=None, color=(0, 255, 0), thickness=2):
@@ -18,19 +20,22 @@ def draw(frame, rectangle, text=None, color=(0, 255, 0), thickness=2):
 def blur(
     frame,
     coords,
-    border=True,
     kernelsize=15,
 ):
-    # TODO: remove this failsafe!
-    if any(coord <= 0 for coord in coords):
-        return
-    if border:
-        draw(frame, coords, color=(0, 0, 0), thickness=1)
     (startX, startY, endX, endY) = coords
     roi = frame[startY:endY, startX:endX]
-    # TODO: investigate cv2.bilateralFilter
     blurred_roi = cv2.GaussianBlur(roi, (kernelsize, kernelsize), 0)
     frame[startY:endY, startX:endX] = blurred_roi
+
+def inpaint(frame, coords):
+    height, width = frame.shape[:2]
+    mask = np.zeros((height, width), dtype=np.uint8)
+    (startX, startY, endX, endY) = coords
+    cv2.rectangle(mask, (startX, startY), (endX, endY), (255), thickness=cv2.FILLED)
+    # Alternative algorithm: cv2.INPAINT_TELEA
+    inpainted = cv2.inpaint(frame, mask, 2, cv2.INPAINT_NS)
+    frame[startY:endY, startX:endX] = inpainted[startY:endY, startX:endX]
+
 
 # Calculate the total area covered by a list of bounding boxes
 # TODO: Check if the 'line sweep' algorithm performs better
