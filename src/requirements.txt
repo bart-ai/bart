@@ -2,3 +2,4 @@ opencv-contrib-python-headless==4.9.0.80
 numpy==1.26.1
 streamlit==1.32.0
 streamlit-webrtc==0.47.6
+onnxruntime==1.17.3

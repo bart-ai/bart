@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 import cvutils
+import onnxruntime as ort
 
 TRANSFORMATIONS = ['detect', 'blur', 'inpaint']
 FACE_MODEL_IMAGE_SIZE = 300
@@ -14,93 +15,129 @@ class Model:
     detect_faces = 'face'
     detect_billboards = 'billboard'
 
-    def _load_onnx_model(self, model_name):
-        cwd = os.path.dirname(os.path.realpath(__file__))
-        net = cv2.dnn.readNet(
-            # YOLOv8 ONNX Model
-            f"{cwd}/model/billboard-detection/{model_name}.onnx",
-        )
-        dimensions = (BILLBOARD_MODEL_IMAGE_SIZE, BILLBOARD_MODEL_IMAGE_SIZE)
-        model = (net, dimensions)
-        return model
+    def _set_onnx_model(self, model_name):
+        self.dimensions = (BILLBOARD_MODEL_IMAGE_SIZE, BILLBOARD_MODEL_IMAGE_SIZE)
 
-    def _load_caffe_model(self):
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        model_path = f"{cwd}/model/billboard-detection/{model_name}.onnx"
+
+        if self.ort:
+            self.session = ort.InferenceSession(
+                model_path,
+                providers=["CPUExecutionProvider"],
+            )
+        else:
+            self.model = cv2.dnn.readNet(model_path)
+
+    def _set_caffe_model(self):
+        self.dimensions = (FACE_MODEL_IMAGE_SIZE, FACE_MODEL_IMAGE_SIZE)
+
         cwd = os.path.dirname(os.path.realpath(__file__))
         net = cv2.dnn.readNet(
-            # Caffe Model
             f"{cwd}/model/face-detection/res10_300x300_ssd_iter_140000.caffemodel",
             f"{cwd}/model/face-detection/deploy.prototxt",
         )
-        dimensions = (FACE_MODEL_IMAGE_SIZE, FACE_MODEL_IMAGE_SIZE)
-        model = (net, dimensions)
-        return model
+        self.model = net
 
     def _detect_onnx_model(self, frame, transformation, confidence):
-        # Feed the frame to the model
-        net, dimensions = self.model
-
         # Read the input image
         original_image = frame
         [height, width, _] = original_image.shape
 
-        # Prepare a square image for inference
-        length = max((height, width))
-        image = np.zeros((length, length, 3), np.uint8)
-        image[0:height, 0:width] = original_image
+        # Convert the image color space from BGR to RGB
+        img = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
-        # Calculate scale factor
-        scale = length / BILLBOARD_MODEL_IMAGE_SIZE
+        # Resize the image to match the input shape
+        # Keep track of the scaling factors for the bounding boxes
+        img = cv2.resize(img, self.dimensions)
+        x_factor = width / self.dimensions[1]
+        y_factor = height / self.dimensions[0]
 
-        # Preprocess the image and prepare blob for model
-        blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=dimensions, swapRB=True)
-        net.setInput(blob)
+        # Run with ONNX Runtime
+        if self.ort:
+            # Normalize the image data by dividing it by 255.0
+            image_data = np.array(img) / 255.0
 
-        # Perform inference
-        outputs = net.forward()
+            # Transpose the image to have the channel dimension as the first dimension
+            image_data = np.transpose(image_data, (2, 0, 1))  # Channel first
 
-        outputs = np.array([cv2.transpose(outputs[0])])
-        rows = outputs.shape[1]
+            # Expand the dimensions of the image data to match the expected input shape
+            image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
 
-        boxes = []
-        scores = []
-        class_ids = []
+            # Run inference using the preprocessed image data
+            outputs = self.session.run(None, {'images': image_data})
+
+        # Run with OpenCV
+        else:
+            # Preprocess the image and prepare blob for model
+            blob = cv2.dnn.blobFromImage(img, scalefactor=1 / 255, size=self.dimensions, swapRB=True)
+            self.model.setInput(blob)
+
+            # Perform inference
+            outputs = self.model.forward()
+
+        # Transpose and squeeze the output to match the expected shape
+        outputs = np.transpose(np.squeeze(outputs[0]))
+
+        # Get the number of rows in the outputs array
+        rows = outputs.shape[0]
+
+        results = []
+        # Iterate through output to collect bounding boxes and confidence scores
+        for i in range(rows):
+            # Extract the class scores from the current row
+            classes_scores = outputs[i][4:]
+
+            # Find the maximum score among the class scores
+            max_score = np.amax(classes_scores)
+
+            # Skip if the maximum score isn't above the confidence threshold
+            if max_score < confidence:
+                continue
+
+            # Get the class ID with the highest score
+            class_id = np.argmax(classes_scores)
+
+            # OPENIMAGES CLASSES INDEXES: https://docs.ultralytics.com/datasets/detect/open-images-v7/
+            # 46 -> Billboard
+            # 264 -> Human face
+            if (self.is_openimages and class_id != 46):
+                continue
+
+            # Extract the bounding box coordinates from the current row
+            x, y, w, h = outputs[i][0], outputs[i][1], outputs[i][2], outputs[i][3]
+
+            # Calculate the scaled coordinates of the bounding box
+            box = [
+                int((x - w / 2) * x_factor), # left
+                int((y - h / 2) * y_factor), # top
+                int(w * x_factor), # width
+                int(h * y_factor) # height
+            ]
+            results.append((box, max_score))
+
+        # Apply NMS (Non-maximum suppression)
+        result_boxes = cv2.dnn.NMSBoxes(
+            [result[0] for result in results],
+            [result[1] for result in results],
+            confidence or 0.5,
+            0.45,
+            0.5
+        )
 
         # Here we'll keep track of all the bounding boxes to eventually calculate
         # the total area covered by the boxes in the frame.
         bounding_boxes = []
 
-        # Iterate through output to collect bounding boxes, confidence scores, and class IDs
-        for i in range(rows):
-            classes_scores = outputs[0][i][4:]
-            (minScore, maxScore, minClassLoc, (x, maxClassIndex)) = cv2.minMaxLoc(classes_scores)
-            if maxScore >= confidence:
-                box = [
-                    outputs[0][i][0] - (0.5 * outputs[0][i][2]),
-                    outputs[0][i][1] - (0.5 * outputs[0][i][3]),
-                    outputs[0][i][2],
-                    outputs[0][i][3],
-                ]
-                # OPENIMAGES CLASSES INDEXES: https://docs.ultralytics.com/datasets/detect/open-images-v7/
-                # 46 -> Billboard
-                # 264 -> Human face
-                if (self.is_openimages and maxClassIndex != 46):
-                    continue
-                boxes.append(box)
-                scores.append(maxScore)
-                class_ids.append(maxClassIndex)
-
-        # Apply NMS (Non-maximum suppression)
-        result_boxes = cv2.dnn.NMSBoxes(boxes, scores, 0.25, 0.45, 0.5)
-
         # Iterate through NMS results to draw bounding boxes and labels
         for i in range(len(result_boxes)):
             index = result_boxes[i]
-            box = boxes[index]
+            box, score = results[index]
 
-            startX = round(box[0] * scale)
-            startY = round(box[1] * scale)
-            endX = round((box[0] + box[2]) * scale)
-            endY = round((box[1] + box[3]) * scale)
+            startX = round(box[0])
+            startY = round(box[1])
+            endX = round((box[0] + box[2]))
+            endY = round((box[1] + box[3]))
 
             # Some coordinates might be out of bounds
             # We clamp them to the image dimensions
@@ -114,8 +151,7 @@ class Model:
                 continue
 
             bbox = (startX, startY, endX, endY)
-
-            self.transform(frame, bbox, scores[index], transformation)
+            self.transform(frame, bbox, score, transformation)
             bounding_boxes.append(bbox)
 
         detection_area = cvutils.calculate_total_area_covered_by_bboxes(bounding_boxes)
@@ -125,14 +161,13 @@ class Model:
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
-        net, net_dimensions = self.model
-        blob = cv2.dnn.blobFromImage(frame, 1.0, net_dimensions)
-        net.setInput(blob)
+        blob = cv2.dnn.blobFromImage(frame, 1.0, self.dimensions)
+        self.model.setInput(blob)
 
         [height, width, _] = frame.shape
 
         # Run the model itself
-        detections = net.forward()
+        detections = self.model.forward()
 
         # Here we'll keep track of all the bounding boxes to eventually calculate
         # the total area covered by the boxes in the frame.
@@ -175,17 +210,17 @@ class Model:
         elif transformation == "inpaint":
             cvutils.inpaint(frame, rectangle)
 
-
-    def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
-        if model_type == Model.detect_billboards:
-            self.model = self._load_onnx_model(model_name)
-            self.detect = self._detect_onnx_model
-        else:
-            self.model = self._load_caffe_model()
-            self.detect = self._detect_caffe_model
-        self.is_openimages = "oiv7" in model_name
-        self.object = model_type
-
     def detect(self, frame, transformation = "detect", confidence = 0.8):
         frame, detection_area_percentage = self.detect(frame, transformation, confidence)
         return frame, detection_area_percentage
+
+    def __init__(self, model_type="billboards", model_name="yolov8n-e50", useOrt=False):
+        self.ort = useOrt
+        if model_type == Model.detect_billboards:
+            self._set_onnx_model(model_name)
+            self.detect = self._detect_onnx_model
+        else:
+            self._set_caffe_model()
+            self.detect = self._detect_caffe_model
+        self.is_openimages = "oiv7" in model_name
+        self.object = model_type
