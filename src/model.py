@@ -214,7 +214,7 @@ class Model:
         frame, detection_area_percentage = self.detect(frame, transformation, confidence)
         return frame, detection_area_percentage
 
-    def __init__(self, model_type="billboards", model_name="yolov8n-e50", useOrt=False):
+    def __init__(self, model_type="billboards", model_name="yolov8n-e50", useOrt=True):
         self.ort = useOrt
         if model_type == Model.detect_billboards:
             self._set_onnx_model(model_name)
