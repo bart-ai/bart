@@ -6,6 +6,7 @@ import av
 import pandas as pd
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
+import requests
 
 from model import TRANSFORMATIONS, Model
 
@@ -13,6 +14,30 @@ BILLBOARD_MODELS_DIR = "model/billboard-detection"
 billboard_models = [
     model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
+
+# https://www.metered.ca/docs/turnserver-guides/expiring-turn-credentials/
+ICE_SERVERS_TTL_SECONDS = 1800  # half an hour
+@st.cache_resource(ttl=ICE_SERVERS_TTL_SECONDS, show_spinner=False)
+def get_ice_servers():
+    servers = [{"urls": ["stun:stun.l.google.com:19302"]}]
+    try:
+        credentials = requests.post(
+            f"https://bart.metered.live/api/v1/turn/credential?secretKey={os.environ['BART_METERED_LIVE_SECRET_KEY']}",
+            headers={"Content-Type": "application/json"},
+            json={"expiryInSeconds": ICE_SERVERS_TTL_SECONDS, "label": "bart"},
+        ).json()
+
+        ice_servers = requests.get(
+            f"https://bart.metered.live/api/v1/turn/credentials?apiKey={credentials['apiKey']}"
+        ).json()
+
+        servers.extend(ice_servers)
+    except Exception as e:
+        print(f"Error setting up STUN/TURN servers: {e}")
+
+    return servers
+
+ice_servers = get_ice_servers()
 
 # The general layout of the app: title -> webcam -> config panel
 st.title("bart: blocking ads in real time", help="[source code](https://github.com/bart-ai/bart)")
@@ -68,7 +93,7 @@ def call_detect(frame):
 with webrtc_container:
     webrtrc_ctx = webrtc_streamer(
         # https://github.com/whitphx/streamlit-webrtc#serving-from-remote-host
-        rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+        rtc_configuration={"iceServers": ice_servers},
         video_frame_callback=call_detect,
         media_stream_constraints={
             "video": {"facingMode": "environment"},
