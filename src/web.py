@@ -37,10 +37,21 @@ def get_ice_servers():
 
     return servers
 
+
 ice_servers = get_ice_servers()
 
-# The general layout of the app: title -> webcam -> config panel
-st.title("bart: blocking ads in real time", help="[source code](https://github.com/bart-ai/bart)")
+st.set_page_config(
+    page_title="bart · Streamlit",
+    menu_items={
+        "About": "https://github.com/bart-ai/bart",
+    },
+)
+# The general layout of the app: title -> webcam -> config panel -> stats panel
+st.title(
+    "bart: blocking ads in real time",
+    help="[source code](https://github.com/bart-ai/bart)",
+)
+
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
 stats_panel = st.container(border=True)
