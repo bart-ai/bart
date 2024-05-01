@@ -5,7 +5,9 @@ import numpy as np
 
 import cvutils
 
-IMAGE_SIZE = 640
+TRANSFORMATIONS = ['detect', 'blur', 'inpaint']
+FACE_MODEL_IMAGE_SIZE = 300
+BILLBOARD_MODEL_IMAGE_SIZE = 640
 
 class Model:
 
@@ -18,7 +20,7 @@ class Model:
             # YOLOv8 ONNX Model
             f"{cwd}/model/billboard-detection/{model_name}.onnx",
         )
-        dimensions = (IMAGE_SIZE, IMAGE_SIZE)
+        dimensions = (BILLBOARD_MODEL_IMAGE_SIZE, BILLBOARD_MODEL_IMAGE_SIZE)
         model = (net, dimensions)
         return model
 
@@ -29,7 +31,7 @@ class Model:
             f"{cwd}/model/face-detection/res10_300x300_ssd_iter_140000.caffemodel",
             f"{cwd}/model/face-detection/deploy.prototxt",
         )
-        dimensions = (IMAGE_SIZE, IMAGE_SIZE)
+        dimensions = (FACE_MODEL_IMAGE_SIZE, FACE_MODEL_IMAGE_SIZE)
         model = (net, dimensions)
         return model
 
@@ -47,7 +49,7 @@ class Model:
         image[0:height, 0:width] = original_image
 
         # Calculate scale factor
-        scale = length / IMAGE_SIZE
+        scale = length / BILLBOARD_MODEL_IMAGE_SIZE
 
         # Preprocess the image and prepare blob for model
         blob = cv2.dnn.blobFromImage(image, scalefactor=1 / 255, size=dimensions, swapRB=True)
@@ -63,6 +65,10 @@ class Model:
         scores = []
         class_ids = []
 
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
+
         # Iterate through output to collect bounding boxes, confidence scores, and class IDs
         for i in range(rows):
             classes_scores = outputs[0][i][4:]
@@ -74,6 +80,11 @@ class Model:
                     outputs[0][i][2],
                     outputs[0][i][3],
                 ]
+                # OPENIMAGES CLASSES INDEXES: https://docs.ultralytics.com/datasets/detect/open-images-v7/
+                # 46 -> Billboard
+                # 264 -> Human face
+                if (self.is_openimages and maxClassIndex != 46):
+                    continue
                 boxes.append(box)
                 scores.append(maxScore)
                 class_ids.append(maxClassIndex)
@@ -85,14 +96,32 @@ class Model:
         for i in range(len(result_boxes)):
             index = result_boxes[i]
             box = boxes[index]
-            # TODO: investigate why some of this coordinates might be negative
+
             startX = round(box[0] * scale)
             startY = round(box[1] * scale)
             endX = round((box[0] + box[2]) * scale)
             endY = round((box[1] + box[3]) * scale)
-            self.transform(frame, (startX, startY, endX, endY), scores[index], transformation)
 
-        return frame
+            # Some coordinates might be out of bounds
+            # We clamp them to the image dimensions
+            startX = max(0, min(startX, width-1))
+            startY = max(0, min(startY, height-1))
+            endX = max(0, min(endX, width-1))
+            endY = max(0, min(endY, height-1))
+
+            # Skip if the bounding box is too small
+            if (startX == endX or startY == endY):
+                continue
+
+            bbox = (startX, startY, endX, endY)
+
+            self.transform(frame, bbox, scores[index], transformation)
+            bounding_boxes.append(bbox)
+
+        detection_area = cvutils.calculate_total_area_covered_by_bboxes(bounding_boxes)
+        detection_area_percentage = detection_area / (height * width) * 100
+
+        return frame, detection_area_percentage
 
     def _detect_caffe_model(self, frame, transformation, confidence):
         # Feed the frame to the model
@@ -100,8 +129,14 @@ class Model:
         blob = cv2.dnn.blobFromImage(frame, 1.0, net_dimensions)
         net.setInput(blob)
 
+        [height, width, _] = frame.shape
+
         # Run the model itself
         detections = net.forward()
+
+        # Here we'll keep track of all the bounding boxes to eventually calculate
+        # the total area covered by the boxes in the frame.
+        bounding_boxes = []
 
         # mostly taken from https://pyimagesearch.com/2018/02/26/face-detection-with-opencv-and-deep-learning/
         # loop over the detections
@@ -116,18 +151,17 @@ class Model:
 
             # compute the (x, y)-coordinates of the bounding box for the object
             # multiply by the frame size to get the actual coordinates
-            height, width = frame.shape[:2]
-            (startX, startY, endX, endY) = (
+            bbox = tuple((
                 detections[0, 0, i, 3:7] * np.array([width, height, width, height])
-            ).astype("int")
-            self.transform(
-                frame,
-                (startX, startY, endX, endY),
-                detection_confidence,
-                transformation,
-            )
+            ).astype("int"))
 
-        return frame
+            self.transform(frame, bbox, detection_confidence, transformation)
+            bounding_boxes.append(bbox)
+
+        detection_area = cvutils.calculate_total_area_covered_by_bboxes(bounding_boxes)
+        detection_area_percentage = detection_area / (height * width) * 100
+
+        return frame, detection_area_percentage
 
     def transform(self, frame, rectangle, score, transformation):
         if transformation == "detect":
@@ -138,12 +172,20 @@ class Model:
             )
         elif transformation == "blur":
             cvutils.blur(frame, rectangle)
+        elif transformation == "inpaint":
+            cvutils.inpaint(frame, rectangle)
 
 
     def __init__(self, model_type="billboards", model_name="yolov8n-e50"):
-        self.model = self._load_onnx_model(model_name) if model_type == Model.detect_billboards else self._load_caffe_model()
-        self.detect = self._detect_onnx_model if model_type == Model.detect_billboards else self._detect_caffe_model
+        if model_type == Model.detect_billboards:
+            self.model = self._load_onnx_model(model_name)
+            self.detect = self._detect_onnx_model
+        else:
+            self.model = self._load_caffe_model()
+            self.detect = self._detect_caffe_model
+        self.is_openimages = "oiv7" in model_name
         self.object = model_type
 
     def detect(self, frame, transformation = "detect", confidence = 0.8):
-        self.detect(frame, transformation, confidence)
+        frame, detection_area_percentage = self.detect(frame, transformation, confidence)
+        return frame, detection_area_percentage

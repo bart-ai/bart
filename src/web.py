@@ -3,15 +3,11 @@ import queue
 import time
 
 import av
+import pandas as pd
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 
-from model import Model
-
-TRANSFORMATION_LABELS = {
-    "detect": "Detect",
-    "blur": "Blur",
-}
+from model import TRANSFORMATIONS, Model
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 BILLBOARD_MODELS_DIR = f"{cwd}/model/billboard-detection"
@@ -20,13 +16,15 @@ billboard_models = [
 ]
 
 # The general layout of the app: title -> webcam -> config panel
-st.title("bart: blocking ads in real time")
+st.title("bart: blocking ads in real time", help="[source code](https://github.com/bart-ai/bart)")
 webrtc_container = st.container()
 configuration_panel = st.expander("Configuration", expanded=True)
+stats_panel = st.container(border=True)
 
-# We need a thread safe queue to store the frame processing time results
+# We need a thread safe queue to store the frame metadata results
 # which are processed in a different thread.
-time_in_frames = queue.Queue()
+stats_queue = queue.Queue()
+total_frames = 0
 
 # We define the model selector before we set up the rest of the app as
 # we need it for the cache key
@@ -52,13 +50,19 @@ else:
     st.session_state[cache_key] = model
 
 # Process the frame on a different thread
+# As errors don't bubble up from this thread, it's prudent to to keep track of
+#   them by printing them
 def call_detect(frame):
-    img = frame.to_ndarray(format="bgr24")
-    start_time = time.time()
-    img = model.detect(img, transformation=transformation, confidence=confidence / 100)
-    end_time = time.time()
-    time_in_frames.put(end_time - start_time)
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
+    try:
+        img = frame.to_ndarray(format="bgr24")
+        start_time = time.time()
+        frame, detection_area_percentage = model.detect(img, transformation=transformation, confidence=confidence / 100)
+        end_time = time.time()
+        frame_processed_in = end_time - start_time
+        stats_queue.put([frame_processed_in, detection_area_percentage])
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
+    except Exception as e:
+        print(f"Error on detection thread: {e}")
 
 
 # Place the webrtc_streamer on our empty container
@@ -79,19 +83,41 @@ with webrtc_container:
 
 # Fill out the rest of the configuration panel
 with configuration_panel:
-    time_container = st.empty()
     transformation = st.selectbox(
         "Transformation",
-        options=("detect", "blur"),
-        format_func=lambda x: TRANSFORMATION_LABELS[x],
+        options=TRANSFORMATIONS,
+        format_func=lambda x: x.capitalize(),
     )
     confidence = st.slider(
         "Detection score", min_value=0, max_value=100, value=80, step=5
     )
 
-# We show the processing time per frame with a while True loop
-# Everything after this block won't be run.
-# Make sure this is at the end of the file.
-while webrtrc_ctx.state.playing:
-    result = time_in_frames.get()
-    time_container.text(f"Frame processing time: {result:.3f} seconds")
+with stats_panel:
+    if st.toggle('Enable profiling'):
+        timetab, areatab = st.tabs(['Performance Profiling', 'Detections Profiling'])
+        with timetab:
+            st.text("Frame processing time")
+            time_line_chart = st.line_chart(pd.DataFrame(columns=['time']))
+            time_stats = st.empty()
+
+        with areatab:
+            st.text("Percentage of area covered by bounding boxes")
+            area_line_chart = st.line_chart(pd.DataFrame(columns=['percentage']))
+            area_stats = st.empty()
+
+        while webrtrc_ctx.state.playing:
+            total_frames += 1
+            [frame_processed_in, last_detection_area_percentage] = stats_queue.get()
+
+            time_line_chart.add_rows(pd.DataFrame([{"time": frame_processed_in}]))
+            area_line_chart.add_rows(pd.DataFrame([{"percentage": last_detection_area_percentage}]))
+
+            time_stats.code(f"""
+                            Number of Frames Processed: {total_frames}
+                            Current Frame Processing Time: {frame_processed_in:.3f} seconds
+            """)
+
+            area_stats.code(f"""
+                            Number of Frames Processed: {total_frames}
+                            Current Area Covered by Bounding Boxes: {last_detection_area_percentage:.3f} percent
+            """)

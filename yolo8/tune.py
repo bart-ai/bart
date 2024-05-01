@@ -30,12 +30,6 @@ parser.add_argument(
     default="nano",
 )
 parser.add_argument(
-    "-d",
-    "--data",
-    help="The relative path to the YOLOv8 dataset data.yaml file",
-    default="./datasets/data.yaml",
-)
-parser.add_argument(
     "-s",
     "--imgsz",
     help="The size of the training dataset images",
@@ -55,7 +49,18 @@ parser.add_argument(
     type=int,
     default=50,
 )
-parser.add_argument("-n", "--name", help="The name of the experiment")
+parser.add_argument(
+    "-r",
+    "--raytune",
+    help="Use raytune on the tuning process",
+    action="store_true"
+)
+naming_group = parser.add_mutually_exclusive_group()
+naming_group.add_argument("-n", "--name", help="The name of the experiment")
+naming_group.add_argument(
+    "--dataname",
+    help="A suffix added to the experiment name for easier identification of the dataset used",
+)
 args = parser.parse_args()
 
 model_path = None
@@ -71,7 +76,16 @@ experiment_name = None
 if args.name:
     experiment_name = f"{args.name}"
 else:
-    experiment_name = f"{YOLO8_MODELS.get(args.model, 'custom')}-i{args.iterations}-e{args.epochs}"
+    metadata = [
+        f"{YOLO8_MODELS.get(args.model, 'custom')}",  # The base model used
+        f"i{args.iterations}",  # The number of tuning iterations
+        f"e{args.epochs}",  # The number of epochs
+    ]
+    if args.dataname:
+        metadata.append(args.dataname) # The dataset used
+    if args.raytune:
+        metadata.append("ray") # If raytune was used
+    experiment_name = "-".join(metadata)
 
 # Tuning.
 # Once the best hyperparams are found, we can load the `best_hyperparameters.yaml`
@@ -81,8 +95,9 @@ results = model.tune(
     iterations=args.iterations,
     name=experiment_name,
     project="./tuning-models",
-    data=args.data,
+    data=os.path.abspath("./datasets/data.yaml"),
     imgsz=args.imgsz,
     epochs=args.epochs,
     batch=-1,  # Use auto batch size
+    use_ray=args.raytune,
 )
