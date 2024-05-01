@@ -108,7 +108,6 @@ with webrtc_container:
         video_frame_callback=call_detect,
         media_stream_constraints={
             "video": {"facingMode": "environment"},
-            # se puede agregar "frameRate": {"ideal": 10, "max": 15},
             "audio": False,
         },
         desired_playing_state=True,
