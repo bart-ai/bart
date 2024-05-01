@@ -9,7 +9,8 @@ from streamlit_webrtc import webrtc_streamer
 
 from model import TRANSFORMATIONS, Model
 
-BILLBOARD_MODELS_DIR = "model/billboard-detection"
+cwd = os.path.dirname(os.path.realpath(__file__))
+BILLBOARD_MODELS_DIR = f"{cwd}/model/billboard-detection"
 billboard_models = [
     model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
 ]
