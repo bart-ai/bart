@@ -6,21 +6,57 @@ import numpy as np
 import cvutils
 import onnxruntime as ort
 
-TRANSFORMATIONS = ['detect', 'blur', 'inpaint']
+cwd = os.path.dirname(os.path.realpath(__file__))
+BILLBOARD_MODELS_DIR = f"{cwd}/model/billboard-detection"
+
+TRANSFORMATIONS = ["detect", "blur", "inpaint"]
 FACE_MODEL_IMAGE_SIZE = 300
 BILLBOARD_MODEL_IMAGE_SIZE = 640
 
+OBJECT = {"FACES": "face", "BILLBOARDS": "billboard"}
+AVAILABLE_MODELS = [
+    # {
+    #     "name": "Bart Main Model",
+    #     "detection": OBJECT["BILLBOARDS"],
+    #     "filename": "yolov8n-e200-multi-bestparams.onnx",
+    # },
+    # {
+    #     "name": "Single dataset - 4503 images",
+    #     "detection": OBJECT["BILLBOARDS"],
+    #     "filename": "yolov8n-e200-hackathon-bestparams.onnx",
+    # },
+    {
+        "name": "OpenImages v7 nano model",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-oiv7.onnx",
+    },
+    {
+        "name": "OpenImages v7 small model",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8s-oiv7.onnx",
+    },
+    {"name": "Native Face Detection", "detection": OBJECT["FACES"]},
+]
+# Add the rest of the models in the billboards directory
+filenames = [model.get("filename") for model in AVAILABLE_MODELS if "filename" in model]
+AVAILABLE_MODELS.extend(
+    [
+        {
+            "name": model_filename.replace(".onnx", ""),
+            "filename": model_filename,
+            "detection": OBJECT["BILLBOARDS"],
+        }
+        for model_filename in os.listdir(BILLBOARD_MODELS_DIR)
+        if model_filename not in filenames
+    ]
+)
+
+
 class Model:
-
-    detect_faces = 'face'
-    detect_billboards = 'billboard'
-
-    def _set_onnx_model(self, model_name):
+    def _set_onnx_model(self, model_filename):
         self.dimensions = (BILLBOARD_MODEL_IMAGE_SIZE, BILLBOARD_MODEL_IMAGE_SIZE)
 
-        cwd = os.path.dirname(os.path.realpath(__file__))
-        model_path = f"{cwd}/model/billboard-detection/{model_name}.onnx"
-
+        model_path = f"{cwd}/model/billboard-detection/{model_filename}"
         if self.ort:
             self.session = ort.InferenceSession(
                 model_path,
@@ -32,7 +68,6 @@ class Model:
     def _set_caffe_model(self):
         self.dimensions = (FACE_MODEL_IMAGE_SIZE, FACE_MODEL_IMAGE_SIZE)
 
-        cwd = os.path.dirname(os.path.realpath(__file__))
         net = cv2.dnn.readNet(
             f"{cwd}/model/face-detection/res10_300x300_ssd_iter_140000.caffemodel",
             f"{cwd}/model/face-detection/deploy.prototxt",
@@ -214,13 +249,13 @@ class Model:
         frame, detection_area_percentage = self.detect(frame, transformation, confidence)
         return frame, detection_area_percentage
 
-    def __init__(self, model_type="billboards", model_name="yolov8n-e50", useOrt=True):
+    def __init__(self, model, useOrt=True):
         self.ort = useOrt
-        if model_type == Model.detect_billboards:
-            self._set_onnx_model(model_name)
+        if model["detection"] == OBJECT["BILLBOARDS"]:
+            self._set_onnx_model(model["filename"])
             self.detect = self._detect_onnx_model
         else:
             self._set_caffe_model()
             self.detect = self._detect_caffe_model
-        self.is_openimages = "oiv7" in model_name
-        self.object = model_type
+        self.is_openimages = "oiv7" in model.get("filename", "")
+        self.object = model["detection"]

@@ -8,13 +8,7 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer
 import requests
 
-from model import TRANSFORMATIONS, Model
-
-cwd = os.path.dirname(os.path.realpath(__file__))
-BILLBOARD_MODELS_DIR = f"{cwd}/model/billboard-detection"
-billboard_models = [
-    model.replace(".onnx", "") for model in os.listdir(BILLBOARD_MODELS_DIR)
-]
+from model import TRANSFORMATIONS, AVAILABLE_MODELS, Model
 
 # https://www.metered.ca/docs/turnserver-guides/expiring-turn-credentials/
 ICE_SERVERS_TTL_SECONDS = 1800  # half an hour
@@ -64,25 +58,20 @@ total_frames = 0
 
 # We define the model selector before we set up the rest of the app as
 # we need it for the cache key
-model_name = configuration_panel.selectbox(
+selected_model = configuration_panel.selectbox(
     "Model",
-    options=["Face detection", *billboard_models],
-    format_func=lambda x: f"Billboard Detection: {x}" if x in billboard_models else x,
+    options=AVAILABLE_MODELS,
+    format_func=lambda x: x["name"],
     index=0,
 )
 
 # Whenever the model name changes, we need to refresh the cached model
 # We can easily see the session state with `st.write(st.session_state)`
-cache_key = f"model_{model_name}"
+cache_key = f"model_{selected_model['name']}"
 if cache_key in st.session_state:
     model = st.session_state[cache_key]
 else:
-    model = Model(
-        Model.detect_billboards
-        if model_name in billboard_models
-        else Model.detect_faces,
-        model_name=model_name,
-    )
+    model = Model(selected_model)
     st.session_state[cache_key] = model
 
 # Process the frame on a different thread
