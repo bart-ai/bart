@@ -124,7 +124,7 @@ with configuration_panel:
         format_func=lambda x: x.capitalize(),
     )
     confidence = st.slider(
-        "Detection score", min_value=0, max_value=100, value=80, step=5
+        "Detection score", min_value=0, max_value=100, value=65, step=5
     )
 
 with stats_panel:
