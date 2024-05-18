@@ -127,9 +127,9 @@ Speed: 1.5ms preprocess, 81.9ms inference, 0.0ms loss, 0.3ms postprocess per ima
 
 | Model Name | Filename                         | # Training Images | mAP50 (training) | mAP (validation) |
 | ---------- | -------------------------------- | ----------------- | ---------------- | ---------------- |
-| multi      | yolov8n-e200-multi-bestparams    | 2514              | 0.862            | 0.540            |
-| hackathon  | yolov8n-e60-hackathon-bestparams | 4503              | 0.807            | 0.496            |
-| isfau      | yolov8n-e60-isfau-bestparams     | 7137              | 0.658            | 0.602            |
-| uo2ld      | yolov8n-e60-uo2ld-bestparams     | 1903              | 0.663            | 0.597            |
-| ydtns      | yolov8n-e60-ydtns-bestparams     | 2719              | 0.687            | 0.626            |
-| s2oeb      | yolov8n-e60-s2oeb-bestparams     | 8155              | 0.680            | 0.636            |
+| multi      | yolov8n-e200-multi-bestparams    | 2514              | 0.862 (#1)       | 0.540 (#5)       |  
+| hackathon  | yolov8n-e60-hackathon-bestparams | 4503              | 0.807 (#2)       | 0.496 (#6)       |  
+| isfau      | yolov8n-e60-isfau-bestparams     | 7137              | 0.658 (#6)       | 0.602 (#3)       |  
+| uo2ld      | yolov8n-e60-uo2ld-bestparams     | 1903              | 0.663 (#5)       | 0.597 (#4)       |  
+| ydtns      | yolov8n-e60-ydtns-bestparams     | 2719              | 0.687 (#3)       | 0.626 (#2)       |  
+| s2oeb      | yolov8n-e60-s2oeb-bestparams     | 8155              | 0.680 (#4)       | 0.636 (#1)       |  
