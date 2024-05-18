@@ -1,6 +1,9 @@
 path: ./datasets/
 train:
+  # We always include the negative images
   - negative-images/train/images
+
+  # Select only one of the models
   # multi
   - billboards-detection/train/images
   - billboards-cmzpu/train/images
@@ -18,7 +21,9 @@ train:
   # - bb-ydtns/train/images
   # s2oeb
   # - billboard-s2oeb/train/images
+
 val:
+  # Select only one of the models
   # multi
   - billboards-detection/valid/images
   - billboards-cmzpu/valid/images
@@ -38,6 +43,7 @@ val:
   # - billboard-s2oeb/valid/images
 
 test:
+  # We test on all of the dataset test splits
   - billboards-detection/test/images
   - billboards-cmzpu/test/images
   - hadplus-illegal-billboard-detector/test/images
