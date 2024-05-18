@@ -20,11 +20,31 @@ AVAILABLE_MODELS = [
         "detection": OBJECT["BILLBOARDS"],
         "filename": "yolov8n-e200-multi-bestparams.onnx",
     },
-    # {
-    #     "name": "Single dataset - 4503 images",
-    #     "detection": OBJECT["BILLBOARDS"],
-    #     "filename": "yolov8n-e200-hackathon-bestparams.onnx",
-    # },
+    {
+        "name": "Single dataset - 8155 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-s2oeb-bestparams.onnx",
+    },
+    {
+        "name": "Single dataset - 2719 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-ydtns-bestparams.onnx",
+    },
+    {
+        "name": "Single dataset - 1903 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-uo2ld-bestparams.onnx",
+    },
+    {
+        "name": "Single dataset - 7137 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-isfau-bestparams.onnx",
+    },
+    {
+        "name": "Single dataset - 4503 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-hackathon-bestparams.onnx",
+    },
     {
         "name": "OpenImages v7 nano model",
         "detection": OBJECT["BILLBOARDS"],

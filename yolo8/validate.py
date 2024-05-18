@@ -16,8 +16,8 @@ model = YOLO(modelPath)
 validation_results = model.val(
   data="./datasets/data.yaml",
   imgsz=640,
-  batch=16,
-  conf=0.8,
+  conf=0.65,
   iou=0.6,
+  split="test",
   # device="mps",
 )

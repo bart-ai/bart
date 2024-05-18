@@ -1,6 +1,5 @@
 path: ./datasets/
 train:
-  # We always include negative images
   - negative-images/train/images
   # multi
   - billboards-detection/train/images
@@ -20,29 +19,34 @@ train:
   # s2oeb
   # - billboard-s2oeb/train/images
 val:
-  # We always validate against the multi dataset model
+  # multi
   - billboards-detection/valid/images
   - billboards-cmzpu/valid/images
   - hadplus-illegal-billboard-detector/valid/images
   - billboards-4zz9y/valid/images
   - bills0/valid/images
   - billboards-oopxm/valid/images
+  # hackathon
   # - hackathon-03-2024/valid/images
+  # isfau
   # - billboard-isfau/valid/images
+  # uo2ld
   # - billboard-detection-uo2ld/valid/images
+  # ydtns
   # - bb-ydtns/valid/images
+  # s2oeb
   # - billboard-s2oeb/valid/images
+
 test:
-  # We don't use the test split in any of our process
-  # - billboards-detection/test/images
-  # - billboards-cmzpu/test/images
-  # - hadplus-illegal-billboard-detector/test/images
-  # - billboards-oopxm/test/images
-  # - hackathon-03-2024/test/images
-  # - billboard-isfau/test/images
-  # - billboard-detection-uo2ld/test/images
-  # - bb-ydtns/test/images
-  # - billboard-s2oeb/test/images
+  - billboards-detection/test/images
+  - billboards-cmzpu/test/images
+  - hadplus-illegal-billboard-detector/test/images
+  - billboards-oopxm/test/images
+  - hackathon-03-2024/test/images
+  - billboard-isfau/test/images
+  - billboard-detection-uo2ld/test/images
+  - bb-ydtns/test/images
+  - billboard-s2oeb/test/images
 
 nc: 1
 names: ["Billboard"]
