@@ -27,7 +27,7 @@ DETECTOR_CLASSES = [
 ]  
 
 DIRECTORY_STRUCTURE = ["negative-images", "train", "images"]
-NUM_IMAGES = 300
+NUM_IMAGES = 250
 
 # http://images.cocodataset.org/annotations/annotations_trainval2017.zip
 coco = COCO("instances_train2017.json")

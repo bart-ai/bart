@@ -59,7 +59,7 @@ args = parser.parse_args()
 # You should have the comet API key defined in your environment variables.
 # export COMET_API_KEY=<Your API Key>
 experiment = Experiment(
-    project_name="test-yolov8-billboards", api_key=os.environ["COMET_API_KEY"]
+    project_name="bart-final-models", api_key=os.environ["COMET_API_KEY"]
 )
 
 print('[INFO] Comet ML configured')

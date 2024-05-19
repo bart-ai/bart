@@ -11,3 +11,4 @@ results.jpg
 instances_train2017.json
 tuning-models
 yolo8/datasets/*/
+yolo8/models
