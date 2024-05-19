@@ -16,14 +16,14 @@ BILLBOARD_MODEL_IMAGE_SIZE = 640
 OBJECT = {"FACES": "face", "BILLBOARDS": "billboard"}
 AVAILABLE_MODELS = [
     {
-        "name": "Bart Main Model",
-        "detection": OBJECT["BILLBOARDS"],
-        "filename": "yolov8n-e200-multi-bestparams.onnx",
-    },
-    {
         "name": "s2oeb dataset - 8155 images",
         "detection": OBJECT["BILLBOARDS"],
         "filename": "yolov8n-e60-s2oeb-bestparams.onnx",
+    },
+    {
+        "name": "multiple datasets - 2514 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e200-multi-bestparams.onnx",
     },
     {
         "name": "ydtns dataset - 2719 images",
