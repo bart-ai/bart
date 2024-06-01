@@ -1,0 +1,84 @@
+\documentclass[a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+
+\usepackage{graphicx, geometry, array, booktabs, float, hyperref, setspace}
+\usepackage[dvipsnames]{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=RoyalBlue,
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \newgeometry{top=0.6in,bottom=0.6in,right=1in,left=1in}
+
+    \centering
+    \hfill
+    \begin{minipage}{0.7\textwidth}
+            \centering
+            \LARGE
+            \textsc{\textbf{Facultad de Ingeniería}}\\[0.1cm]
+            \textsc{\textbf{Universidad de Buenos Aires}}
+        \end{minipage}%
+        \begin{minipage}{2.6cm}
+            \centering
+            \includegraphics[width=2.6cm]{./img/fiuba.png}
+        \end{minipage}
+
+    \vspace{3cm}
+    \huge \bfseries Trabajo Profesional \\
+    \LARGE \bfseries Licenciatura en Análisis de Sistemas, Ingeniería en Informática
+    \vspace{2cm}
+
+    \rule{\linewidth}{0.3mm} \\[0.1cm]
+    \huge \bfseries Sistema de detección en tiempo real de publicidad en la vía pública \\
+    \rule{\linewidth}{0.3mm}\\[0.7cm]
+
+    \large \emph{Tutor:} Ing. Martín Buchwald\\[0.6cm]
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushleft}
+            \centering
+            \large del Mazo, Federico \\
+            100029
+        \end{flushleft}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+        \begin{flushright}
+            \centering
+            \large Pastine, Casimiro \\
+            100017
+        \end{flushright}
+    \end{minipage}
+
+\end{titlepage}
+
+\restoregeometry
+\tableofcontents
+\newpage
+
+\section{Motivación}
+
+Dentro del marco de trabajo profesional de las carreras de Licenciatura en Análisis de Sistemas y de Ingeniería en Informática de la Facultad de Ingeniería, Universidad de Buenos Aires, se presenta el proyecto de un sistema de detección de publicidades en la vía pública en tiempo real.
+
+\setcounter{secnumdepth}{0}
+\doublespacing
+
+\section{Referencias}
+
+\textbf{[1]} OpenCV: \url{https://opencv.org/}
+
+\section{Bibliografía}
+
+Rosebrock, Adrian. (2017). \textit{Deep learning for Computer Vision with Python.}
+
+Ansari, Shamshad. (2020). \textit{Building Computer Vision Applications Using Artificial Neural Networks}, Apress.
+
+Moroney, Laurence. (2020). \textit{AI and Machine Learning for Coders}, O'Reilly.
+
+\end{document}
