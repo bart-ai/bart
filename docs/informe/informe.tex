@@ -1,3 +1,5 @@
+% TODO HERE: ajustar todos los tamaños de imagenes
+
 \documentclass[a4paper]{article}
 
 \usepackage[T1]{fontenc}
@@ -6,6 +8,7 @@
 \usepackage{subfig,graphicx, geometry, array, booktabs, float, hyperref, setspace}
 
 % Remove labels and center all captions
+\captionsetup[subfigure]{labelformat=empty,justification=centering}
 \captionsetup{justification=centering,labelformat=empty}
 
 \usepackage[dvipsnames]{xcolor}
@@ -34,7 +37,7 @@
             \LARGE
             \textsc{\textbf{Facultad de Ingeniería}}\\[0.1cm]
             \textsc{\textbf{Universidad de Buenos Aires}}
-        \end{minipage}%
+        \end{minipage}
         \begin{minipage}{2.6cm}
             \centering
             \includegraphics[width=2.6cm]{./img/fiuba.png}
@@ -117,7 +120,6 @@ Uno de los avances más revolucionarios dentro del campo de \textit{Computer Vis
 
 La técnica principal de \textit{Computer Vision} en la que se basa nuestro trabajo es la detección de objetos. Esta técnica se plantea como un paso más allá de la clasificación de imágenes; en vez de solamente saber si una imagen contiene o no un objeto, lo que se busca es saber exactamente en qué porción de la imagen lo está.
 
-% Cambiar por una foto de classif que diga "Label: Cartel" en vez de un numero
 \begin{figure}[H]
 \makebox[\textwidth][c]{
     \subfloat[\centering La clasificación de imágenes indica si un objeto está presente.]{{\includegraphics[width=0.6\textwidth]{./img/classif.jpg} }}
@@ -154,7 +156,7 @@ El objetivo de esta página es tomar los cuadros de la cámara del dispositivo d
 \makebox[\textwidth][c]{
     \subfloat{{\includegraphics[width=0.7\textwidth]{./img/desktop.png} }}
     \qquad
-    \subfloat{{\includegraphics[width=4cm]{./img/mobile.jpg} }}
+    \subfloat{{\includegraphics[width=0.2\textwidth]{./img/mobile.jpg} }}
 }
 \caption{Distintas disposiciones de \textit{BART} según las dimensiones del dispositivo}
 \end{figure}
@@ -165,6 +167,7 @@ El contenido principal de la página es la sección dónde se le muestra al usua
 
 La página cuenta con una sección de configuración, dónde el usuario puede elegir que tipo de transformación se le aplica a los cuadros del video. Las transformaciones que provee el sitio son tres: solamente detectar objetos, difuminarlos, o incluso removerlos de la imagen. La naturaleza modular del sistema permite que sea sencillo agregar una transformación de imágenes en el futuro.
 
+% TODO HERE: Reemplazar por billboards
 \begin{figure}[H]
 \makebox[\textwidth][c]{
     \subfloat[\centering Detección]{{\includegraphics[width=0.4\textwidth]{./img/detect.png} }}
@@ -179,6 +182,7 @@ Además, se le permite al usuario seleccionar el modelo a utilizar para la infer
 
 Finalmente, se puede configurar la confianza del modelo, lo cual le permite al usuario ser tan permisivo como le guste con las posibles detecciones del sistema.
 
+% TODO HERE: Reemplazar por billboards
 \begin{figure}[H]
 \makebox[\textwidth][c]{
     \subfloat[\centering Un valor alto de confianza es más estricto con las detecciones]{{\includegraphics[width=0.4\textwidth]{./img/high-confidence.png} }}
@@ -195,13 +199,15 @@ El sitio además cuenta con una sección de estadísticas la cual sirve para pod
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Medición de la velocidad de procesamiento del modelo con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-perf.png} }}%
+    \subfloat[\centering Medición de la velocidad de procesamiento del modelo con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-perf.png} }}
     \qquad
-    \subfloat[\centering Medición de las areas de los objetos detectados con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-area.png} }}%
+    \subfloat[\centering Medición de las areas de los objetos detectados con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-area.png} }}
 }
 \end{figure}
 
-Esta sección nos permite evaluar dos métricas importantes del modelo: la velocidad de detección sobre cada cuadro (y así saber qué modelo es más rápido que otro), y el tamaño del área detectada del objeto, para poder evaluar la precisión de la detección.
+Esta sección nos permite evaluar dos métricas importantes del modelo: la velocidad de detección sobre cada cuadro (y así saber qué modelo es más rápido que otro), y el tamaño del área detectada del objeto.
+
+Esta última funcionalidad la ideamos con el fin de entender cuán presente está el objeto en cámara a medida que es filmado. Una pregunta interesante para hacerse, dado un anuncio, es si este está siendo muy disruptivo en lo que estamos queriendo ver o fotografiar. Esta funcionalidad nos permite obtener el área total del video que fué ocupada por el anuncio en cuestión.
 
 \subsection{Detección de Anuncios}
 
@@ -220,13 +226,26 @@ Una red neuronal es un sistema de capas sucesivas donde cada capa procesa datos 
 En el caso de las redes convolucionales los datos no son texto, sino que son imágenes.
 Una imagen se codifica en forma de matriz: cada elemento representa un píxel y a su vez cada píxel es una representación numérica de sus colores.
 
-<foto de imagen as matriz>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/matrix.png}}
+\caption{Una posible representación de una imagen es una matriz por cada canal de color (rojo, verde, azul)}
+\end{figure}
 
-Al ser los datos de entrada una matriz numérica, cada capa de la red neuronal debe realizar transformaciones mediante operaciones matriciales. La operación matemática fundamental de estas redes es la convolución: consiste en deslizar una matriz pequeña de filtro sobre la entrada y acumular los productos resultantes para producir una nueva matriz de salida, la cual se utilizará como entrada en la siguiente capa de la red. De esta manera, cada capa reduce la matriz original y extrae características relevantes de la imagen, permitiendo la detección de patrones en ella. Este proceso continua hasta tener un resultado final de las características aprendidas.
+Al ser los datos de entrada una matriz numérica, cada capa de la red neuronal debe realizar transformaciones mediante operaciones matriciales. La operación matemática fundamental de estas redes es la convolución: consiste en deslizar una matriz pequeña de filtro sobre la entrada y acumular los productos resultantes para producir una nueva matriz de salida, la cual se utilizará como entrada en la siguiente capa de la red.
 
-<foto de convoluciones y foto de CNN>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.9\textwidth]{./img/convolution.png}}
+\caption{Las distintas convoluciones de cada capa nos permiten extraer características de la imagen}
+\end{figure}
 
-\subsubsection{\textit{Trasnfer Learning}}
+De esta manera, cada capa reduce la matriz original y extrae características relevantes de la imagen, permitiendo la detección de patrones en ella. Este proceso continua hasta tener un resultado final de las características aprendidas.
+
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{./img/cnn-skel.png}}
+\caption{Una \textit{CNN} toma una imagen de entrada y luego de varios pasos termina en una clasificación de esta}
+\end{figure}
+
+\subsubsection{\textit{Transfer Learning}}
 
 En los últimos años el campo de la inteligencia artificial avanzó en niveles exponenciales, no solo con conceptos y tecnologías nuevas, sino que además mejorando considerablemente la experiencia de usuario, permitiéndole a los desarrolladores de \textit{software} no necesitar ser expertos en la disciplina para poder experimentar con los últimos avances.
 
@@ -235,8 +254,6 @@ Si bien es posible desarrollar a bajo nivel, donde se puede diseñar la arquitec
 Partiendo desde un modelo pre-entrenado basado en la familia de algoritmos \textit{YOLO}, nuestro trabajo consiste en optimizar el entrenamiento de un nuevo modelo que cumpla nuestros requerimientos específicos: en nuestro caso, detección de carteles publicitarios.
 
 \textit{YOLO}, \textit{You Only Look Once} \cite{yolov1}, es un tipo de algoritmo de detección de objetos en tiempo real introducido en 2016 que rápidamente demostró ser una alternativa superior a los métodos existentes. A diferencia de otros métodos de detección de objetos que pasan una imagen a través de la red varias veces, \textit{YOLO} realiza todas las predicciones con una sola pasada a través de la red, lo que lo hace extremadamente rápido y la mejor opción para nuestro trabajo.
-
-<¿si existe, foto de yolo siendo mejor que el resto?>
 
 En nuestro caso hicimos uso de la implementación de \textit{YOLO} que ofrece \textit{Ultralytics} \cite{ultralytics}, denominada \textit{YOLOv8}. Además del algoritmo, \textit{Ultralytics} provee un entorno de \textit{software} que permite refinar modelos pre-entrenados, evaluarlos, y compararlos.
 
@@ -271,8 +288,6 @@ Utilizando \textit{Pyodide} \cite{pyodide}, un compilador de \textit{Python} a \
 \subsubsection{Detección en el Servidor}
 
 Habiendo descartado la alternativa de hacer la detección en el cliente, solamente nos quedaba la opción de utilizar un servidor centralizado para hacer las detecciones.
-
-<¿diagrama de como van los frames al servidor?>
 
 Frente a una arquitectura cliente-servidor es fundamental la velocidad de conexión con la que el cliente se conecta con el servidor, y mitigar que una conexión lenta produzca una demora considerable en la comunicación entre ambos componentes.
 
@@ -318,17 +333,15 @@ La velocidad de un modelo se puede medir por la cantidad de segundos que se toma
 
 Al ser este modelo parte de un sistema de procesamiento de videos, no debemos pensar en imágenes individuales, sino que debemos considerar cada entrada como una parte del todo: un fotograma de un video. Por lo tanto, la métrica relevante para saber cuán viable es un modelo dentro de nuestro proyecto es el agregado de cuanto se demora en procesar el conjunto de cuadros recibidos.
 
-<¿foto del line chart?>
-
 \subsubsection{Precisión de la Inferencia}
 
 La precisión del modelo debe englobar distintos tipos de aciertos y errores. Lo que se debe contabilizar es la combinación entre las predicciones hechas y su correctitud. Es decir, nos importa medir tanto cuán correctas fueron las predicciones hechas, pero también qué predicciones se debieron hacer pero no se hicieron. Este concepto se conoce como la confusión del modelo y se puede visualizar en una grilla que combine estos dos atributos.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un \textit{verdadero positivo} es el \textbf{acierto} donde se detecta un objeto correctamente]{{\includegraphics[width=0.4\textwidth]{./img/TP.jpg} }}
+    \subfloat[\centering Un \textit{falso negativo} es un \textbf{error} donde no se detectó un objeto que sí esta presente]{{\includegraphics[width=0.45\textwidth]{./img/FN.jpg} }}
     \qquad
-    \subfloat[\centering Un \textit{falso positivo} es un \textbf{error} donde se detecta un objeto no presente en la realidad]{{\includegraphics[width=0.4\textwidth]{./img/FP.jpg} }}
+    \subfloat[\centering Un \textit{verdadero negativo} es un \textbf{acierto} donde no se detecta ningún objeto ya que realmente no hay ninguno presente]{{\includegraphics[width=0.45\textwidth]{./img/TN.jpg} }}
 }
 \end{figure}
 
@@ -336,12 +349,11 @@ La precisión del modelo debe englobar distintos tipos de aciertos y errores. Lo
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un \textit{falso negativo} es un \textbf{error} donde no se detectó un objeto que sí esta presente]{{\includegraphics[width=0.4\textwidth]{./img/FN.jpg} }}
+    \subfloat[\centering Un \textit{verdadero positivo} es el \textbf{acierto} donde se detecta un objeto correctamente]{{\includegraphics[width=0.45\textwidth]{./img/TP.jpg} }}
     \qquad
-    \subfloat[\centering Un \textit{verdadero negativo} es un \textbf{acierto} donde no se detecta ningún objeto ya que realmente no hay ninguno presente]{{\includegraphics[width=0.4\textwidth]{./img/TP.jpg} }}
+    \subfloat[\centering Un \textit{falso positivo} es un \textbf{error} donde se detecta un objeto no presente en la realidad]{{\includegraphics[width=0.45\textwidth]{./img/FP.jpg} }}
 }
 \end{figure}
-
 
 Entender si una predicción es correcta o no, dentro del área de detección de objetos en imágenes, no es una tarea simple. Un modelo que detecta objetos dentro de imágenes va a dar como resultado el mínimo rectángulo que contiene al objeto deseado, y este resultado debe ser comparado contra el rectángulo verdadero donde se ubica el objeto.\\
 
@@ -370,8 +382,6 @@ Para medir la precisión, se necesita decidir un umbral a partir del cual será 
 Dado que la calidad de una predicción es una escala, no nos sirve quedarnos solamente con la precisión con \textit{IoU} 0.5. Lo que se busca es medir la precisión del modelo en varios niveles de \textit{IoU} y luego promediarlos, para obtener una métrica que nos permite comparar dos modelos distintos. Esta métrica se denomina \textit{Mean Average Precision} (\textit{mAP}) y es utilizada frecuentemente en evaluación y comparación de modelos de redes neuronales ya que cumple el objetivo de proporcionar una evaluación amplia y completa del rendimiento del modelo.
 
 Utilizando un umbral entre 0.5 y 0.95 para esta métrica (denominado \textit{mAP50-95}), obtenemos un valor numérico que nos indique que tan efectivo es un modelo en comparación con otros y así poder evaluar y seleccionar el mejor modelo a utilizar en nuestro sistema.
-
-<¿foto de gráfico de MAP50-95?>
 
 \subsubsection{Base del Entrenamiento}
 
@@ -444,11 +454,11 @@ En cuanto a la velocidad, optamos por utilizar modelos del tamaño \textit{nano}
  \hline
  Modelo & Tamaño & \textit{mAP50} & Tiempo por cuadro \\
  \hline\hline
- \texttt{yolov8n-oiv7} & \textit{nano}   & FILLME & FILLME \\ \hline
- \texttt{yolov8s-oiv7} & \textit{small}  & FILLME & FILLME \\ \hline
- \texttt{yolov8m-oiv7} & \textit{medium} & FILLME & FILLME \\ \hline
- \texttt{yolov8l-oiv7} & \textit{large}  & FILLME & FILLME \\ \hline
- \texttt{yolov8x-oiv7} & \textit{xlarge} & FILLME & FILLME \\ \hline
+ \texttt{yolov8n-oiv7} & \textit{nano}   & 0.855 & 0.15s \\ \hline
+ \texttt{yolov8s-oiv7} & \textit{small}  & 0.865 & 0.35s \\ \hline
+ \texttt{yolov8m-oiv7} & \textit{medium} & 0.875 & 0.75s \\ \hline
+ \texttt{yolov8l-oiv7} & \textit{large}  & 0.873 & 1.50s \\ \hline
+ \texttt{yolov8x-oiv7} & \textit{xlarge} & 0.878 & 1.80s \\ \hline
 \end{tabular}
 \caption{Comparación de velocidad de modelos entrenados sobre \textit{Open Images} según los distintos tamaños}
 \end{table}
@@ -462,12 +472,12 @@ En cuanto a la precisión, siempre basandonos en el modelo \textit{nano}, dejamo
     \hline
     Modelo & \# Imagenes de Entrenamiento & \textit{mAP50} & \textit{mAP50-95} \\
     \hline\hline
-    \texttt{yolov8n-e200-multi-bestparams}    & 2514 & 0.540 & 0.340 \\ \hline
-    \texttt{yolov8n-e60-hackathon-bestparams} & 4503 & 0.496 & 0.315 \\ \hline
+    \texttt{yolov8n-e60-s2oeb-bestparams}     & 8155 & 0.636 & 0.412 \\ \hline
+    \texttt{yolov8n-e60-ydtns-bestparams}     & 2719 & 0.626 & 0.390 \\ \hline
     \texttt{yolov8n-e60-isfau-bestparams}     & 7137 & 0.602 & 0.360 \\ \hline
     \texttt{yolov8n-e60-uo2ld-bestparams}     & 1903 & 0.597 & 0.364 \\ \hline
-    \texttt{yolov8n-e60-ydtns-bestparams}     & 2719 & 0.626 & 0.390 \\ \hline
-    \texttt{yolov8n-e60-s2oeb-bestparams}     & 8155 & 0.636 & 0.412 \\ \hline
+    \texttt{yolov8n-e200-multi-bestparams}    & 2514 & 0.540 & 0.340 \\ \hline
+    \texttt{yolov8n-e60-hackathon-bestparams} & 4503 & 0.496 & 0.315 \\ \hline
     \end{tabular}
 }
 \caption{Comparación de precisión de los modelos finales}
@@ -483,13 +493,25 @@ Buscando una interfaz unificada entre estos dos polos, llegamos a \textit{ONNX},
 
 Inicialmente la herramienta utilizada para la lectura de los modelos fue \textit{OpenCV}, una de las principales bibliotecas de nuestro sistema que utilizamos para la preparación de los cuadros y la transformación de estos. Si bien \textit{OpenCV} es compatible con el formato \textit{ONNX}, no tiene las mejoras necesarias para tener un rendimiento optimo. La herramienta final que utilizamos en la etapa de inferencia es \textit{ONNX Runtime} \cite{ort}, cuya lectura de modelos en formato \textit{ONNX} tiene más madurez que la de \textit{OpenCV} y tiene múltiples optimizaciones aplicadas para poder proveer una ejecución más veloz del modelo.
 
-<foto de opencv vs ort>
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+    \subfloat[\centering Usando \textit{OpenCV} como el \textit{runtime} de inferencia, se promedia el procesamiento en 0.3 segundos por cuadro.]{{\includegraphics[width=0.5\textwidth]{./img/opencv.png} }}
+    \qquad
+    \subfloat[\centering \textit{ONNX Runtime} puede darnos un rendimiento de 0.15 segundos por cuadro con pocas modificaciones.]{{\includegraphics[width=0.5\textwidth]{./img/ort.png} }}
+}
+\end{figure}
 
 Por otro lado, además de la herramienta utilizada, es importante entender que el modelo corre sobre el hardware computacional del dispositivo que lo ejecuta. En nuestro caso, esto sucede en el servidor desplegado (ya que es este quien recibe los cuadros sobre los cuales inferir). Si bien el rendimiento óptimo de los modelos hoy en día se hace en placas de video especialmente dedicadas (\textit{GPUs}), estas representan un costo considerable el cual se puede omitir de lograr una ejecución aceptable en los procesadores (\textit{CPUs}).
 
 Haciendo una evaluación de nuestro servidor con múltiples \textit{CPUs} de distinto tamaño de memoria, se llega a tener el rendimiento deseado sin afectar al costo del despliegue.
 
-<fotito de flyio con muchas cpus vs una cpu>
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+    \subfloat[\centering Un procesador de 1\textit{GB} promedia el procesamiento de cuadros en 0.2 segundos por cuadro]{{\includegraphics[width=0.5\textwidth]{./img/ort-1gb.png} }}
+    \qquad
+    \subfloat[\centering Un procesador de 16\textit{GB} redujo el procesamiento a la mitad, promediando en 0.1 segundos por cuadro]{{\includegraphics[width=0.5\textwidth]{./img/ort-16gb.png} }}
+}
+\end{figure}
 
 \subsubsection{Funcionalidades}
 
@@ -497,27 +519,39 @@ Una de las funcionalidades que provee nuestro sistema es la de poder elegir cóm
 
 La transformación más sencilla que se puede aplicar sobre una imagen es la de la detección. Esta transformación consiste en solamente indicar en la imagen el rectángulo en el que se detectó que hay un objeto presente.
 
-<foto de deteccion>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.9\textwidth]{./img/detect-bart.jpg}}
+\caption{Detección de múltiples objetos en la misma fotografía}
+\end{figure}
 
 La segunda transformación aplicada, ya pensando en el sistema de detección de publicidades, es el \textit{blurring}. El difuminado de las publicidades sirve el propósito de indicar explícitamente que allí hay un anuncio no deseado.
 
-<foto de blurring>
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+    \subfloat{{\includegraphics[width=0.5\textwidth]{./img/test.jpeg} }}
+    \qquad
+    \subfloat{{\includegraphics[width=0.5\textwidth]{./img/blur-bart.jpg} }}
+}
+\caption{Difuminado de objetos}
+\end{figure}
 
 La última transformación desarrollada, probablemente la más interesante de las tres, es la técnica de \textit{Image Inpainting}. Partiendo de cuando se quiere directamente remover un cartel de una imagen buscamos que problemas y soluciones existen en el campo de \textit{Computer Vision} para este tipo de casos. \textit{Image Inpainting} es una técnica pensada específicamente para la restauración de fotos analógicas o cuadros incompletos, donde se tienen impurezas (roturas, rayones, etc) que se quieren reconstruir en base a sus alrededores. Esto se puede hacer de manera deterministica, con un algoritmo que analiza los colores de los pixeles cercanos al hueco a rellenar, o se puede tener una red neuronal específicamente entrenada con este propósito en mente.
 
-<foto de image inpainting en fotos>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{./img/inpaint-old-photo.png}}
+\caption{El caso de uso más tradicional de \textit{Image Inpainting} es la restauración de fotos analógicas}
+\end{figure}
 
 Si bien esta técnica no está pensada para nuestro caso de uso, donde los carteles son rectángulos que ocupan gran parte de la imagen en vez de solamente una línea o un pequeño detalle, nos pareció una buena prueba de concepto para aplicar sobre nuestro sistema y en algunos casos da resultados bastante positivos.
 
-<foto de image inpainting en bart>
-
-<mover esto a la sección de "resultado" del principio, y renombrar este apartado a "transformaciones">
-
-Otra de las funcionalidades que ofrece el sistema, en el apartado de estadísticas, es la de poder ver cuán presente está el objeto en cámara a medida que es filmado. En este caso nos preguntamos si un anuncio está siendo muy disruptivo en lo que estamos queriendo ver o fotografiar, analizando el agregado de cuánto área del total consume el objeto detectado.
-
-<otro caso de uso mas?>
-
-<foto del line chart>
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+    \subfloat{{\includegraphics[width=0.5\textwidth]{./img/test-no-inpaint.jpg} }}
+    \qquad
+    \subfloat{{\includegraphics[width=0.5\textwidth]{./img/test-inpaint.jpg} }}
+}
+\caption{Eliminación de objetos a través de \textit{Image Inpainting}}
+\end{figure}
 
 \subsubsection{Optimizaciones}
 
@@ -529,9 +563,9 @@ Los dispositivos de filmación pueden tomar videos en distintos \textit{frame ra
 
 Una optimización que se puede aplicar en el consumo de los cuadros es decidir eliminar cuadros intermedios y pasarle menos imágenes a procesar al modelo. Al tener menos cuadros para procesar podemos mejorar la velocidad total de la inferencia del modelo, pero siempre cuidando la velocidad percibida del sistema: si yo elimino cuadros intermedios excesivamente, el video resultante será muy entrecortado y la experiencia del usuario se ve perjudicada.
 
-Además de la cantidad de cuadros nos importa la calidad de ellos. A mayor resolución, una imagen tiene más píxeles y es más nítida, dándole más información al modelo para detectar objetos sobre ella y así tener detecciones más precisas. Pero esto también resulta en un aumento del costo de procesamiento ya que hay más información de entrada. Modificando la calidad de las imágenes a procesar podemos nuevamente balancear el intercambio entre velocidad y precisión.
+Además de la cantidad de cuadros nos importa la calidad de ellos. A mayor resolución, una imagen tiene más píxeles y es más nítida, dándole más información al modelo para detectar objetos sobre ella y así tener detecciones más precisas. Pero esto también resulta en un aumento del costo de procesamiento ya que hay más información de entrada. Modificando la calidad de las imágenes a procesar podemos nuevamente balancear el intercambio entre velocidad y precisión. \\
 
-<falta una frase acá de como lo aplicamos>
+En particular, \textit{WebRTC} nos provee mecanismos para ajustar dinámicamente los cuadros por segundo y la calidad de estos frente a una mala conexión del cliente. Esto nos permite mantener una sesión fluida sin interrumpir el sistema y recuperar la calidad de la inferencia al obtener una mejor comunicación entre el cliente y el servidor, siempre proveyendo la mejor experiencia posible frente a las condiciones dadas.
 
 \subsection{Presentación}
 
@@ -546,6 +580,11 @@ En particular hacemos uso del componente externo \texttt{streamlit-webrtc} \cite
 \subsubsection{Comunicación}
 
 El protocolo de comunicación utilizado en nuestro sistema es \textit{WebRTC}, el cual se basa en coordinar conexiones \textit{peer-to-peer} entre dos dispositivos (en nuestro caso, de nuestro servidor al explorador web del usuario). Ya que no se puede establecer una conexión directa entre dos pares si no se sabe siquiera donde residen, para poder establecer estas conexiones \textit{WebRTC} requiere de servidores externos que se encargan del descubrimiento (\textit{discovery}) de los pares, que se denominan \textit{STUN} y \textit{TURN}.
+
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/webrtc.png}}
+\caption{\textit{WebRTC} hace uso de servidores \textit{STUN} y \textit{TURN} para establecer las conexiones par-a-par a través de \textit{WebSockets}}
+\end{figure}
 
 Hay distintos servicios que proveen servidores de este tipo que varían en calidad y no siempre funcionan en todo tipo de entornos. Después de varias evaluaciones, donde se debe procurar que el servicio ande tanto en \textit{WiFi} como en redes móviles, utilizamos el servicio provisto por \textit{Open Relay} \cite{openrelay}.
 
@@ -683,15 +722,28 @@ Además de la abundancia de investigación, nos sorprendió la calidad de la exp
 \item \textbf{Rastreo de Objetos:} Si bien nosotros descartamos utilizarlo porque lo consideramos fuera del alcance, puede ser una herramienta muy interesante para generar nuevos tipos de estadísticas sobre el video que está siendo procesado. Por ejemplo, podríamos ofrecerle al usuario las marcas de tiempo exactas dónde se vió un anuncio específico en el video, o un contador de que tantas veces aparece cada anuncio, rastreando cuando un anuncio específico entra y sale de pantalla.
 
 
-<¿foto de rastreo?>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/multiple-object-tracking.jpg}}
+\caption{El \textit{Object Tracking} identifica cada objeto detectado unívocamente}
+\end{figure}
 
 \item \textbf{Segmentación:} En nuestra implementación, el difuminado del anuncio se hace marcando el centro del rectángulo que lo contiene y aplicando una difuminación gaussiana que difumina más en el centro y menos a medida que se aleja de él. Si bien es una solución aceptable, no es perfecta. Se podría mejorar reemplazando la detección del modelo con rectángulo minimal actual por los segmentos indicados con la técnica de \textit{Object Segmentation}. Esta técnica además de entender dónde está el objeto en la imágen dá información sobre la forma exacta del mismo. Esto podría permitir hacer transformaciones sobre la imágen con mayor precisión.
 
-<foto de segmentación>
+\begin{figure}[H]
+\makebox[\textwidth][c]{
+    \subfloat[\centering Los distintos problemas de \textit{Computer Vision} dentro de los cuales se encuentran los tipos de segmentación.]{{\includegraphics[width=0.75\textwidth]{./img/segmentation-goat.jpeg} }}
+    \qquad
+    \subfloat[\centering En nuestro caso, la segmentación se aplicaría sobre carteles publicitarios.]{{\includegraphics[width=0.35\textwidth]{./img/segmentation.png} }}
+}
+\end{figure}
 
 \item \textbf{Clasificación multi-clase:} Arbitrariamente decidimos que el alcance del trabajo era para carteles de publicidad en la vía pública, pero es enteramente posible re-entrenar los modelos con otros tipos de publicidades como marcas, logos, e incluso detectar situaciones sutiles de product placement en películas o series de televisión.
 
-<foto de multi-class>
+\begin{figure}[H]
+\makebox[\textwidth][c]{\includegraphics[width=0.6\textwidth]{./img/multi-class.png}}
+\caption{La multi clasificación identifica distintas categorías de objetos en la misma imagen}
+\end{figure}
+
 \end{itemize}
 
 Asimismo, en el transcurso del trabajo fuimos testigos de cómo este es un campo que todavía está en constante cambio y mejora. Solo por dar un ejemplo, al comenzar este trabajo la implementación más avanzada de la familia de algoritmos \textit{YOLO} era \textit{YOLOv8} (presentado en enero de 2023 \cite{yolov8}) y al finalizarlo comenzamos a ver implementaciones de \textit{YOLOv10} (publicado en mayo de 2024 \cite{yolov10}). Es claro que esta podría ser otra opción para la extensión del trabajo, uno podría partir de los mismos conjuntos de datos que ya utilizamos nosotros y recrear todos nuestros entrenamientos utilizando versiones más modernas de \textit{YOLO} para comparar las mejoras o directamente mejorar la aplicación web. \\
