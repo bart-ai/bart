@@ -145,3 +145,16 @@ with stats_panel:
                             Number of Frames Processed: {total_frames}
                             Current Area Covered by Bounding Boxes: {last_detection_area_percentage:.3f} percent
             """)
+
+# TESTING ONLY
+# import numpy as np
+# from PIL import Image
+
+# uploaded_file = st.file_uploader("test model on external image", type=["png", "jpg"])
+# uploaded_image = None
+# if uploaded_file:
+#     uploaded_image = Image.open(uploaded_file)
+#     frame, _ = model.detect(
+#         np.array(uploaded_image), transformation="detect", confidence=15 / 100
+#     )
+#     st.image(frame)
