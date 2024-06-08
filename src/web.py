@@ -147,14 +147,14 @@ with stats_panel:
             """)
 
 # TESTING ONLY
-import numpy as np
-from PIL import Image
+# import numpy as np
+# from PIL import Image
 
-uploaded_file = st.file_uploader("test model on external image", type=["png", "jpg"])
-uploaded_image = None
-if uploaded_file:
-    uploaded_image = Image.open(uploaded_file)
-    frame, _ = model.detect(
-        np.array(uploaded_image), transformation=transformation, confidence=confidence / 100
-    )
-    st.image(frame)
+# uploaded_file = st.file_uploader("test model on external image", type=["png", "jpg"])
+# uploaded_image = None
+# if uploaded_file:
+#     uploaded_image = Image.open(uploaded_file)
+#     frame, _ = model.detect(
+#         np.array(uploaded_image), transformation=transformation, confidence=confidence / 100
+#     )
+#     st.image(frame)
