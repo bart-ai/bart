@@ -1,6 +1,6 @@
 # bart: blocking ads in real time
 
-This project aims to simply detect ad billboards in the user's camera. Think of it as an adblocker for the real life.
+This project aims to simply detect ad billboards in the user's camera. Think of it as the starting point for a real life ad blocker.
 
 ![](./docs/img/desktop.png)
 
