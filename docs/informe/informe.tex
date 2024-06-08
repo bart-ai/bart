@@ -150,7 +150,7 @@ El objetivo de esta página es tomar los cuadros de la cámara del dispositivo d
 \makebox[\textwidth][c]{
     \subfloat{{\includegraphics[width=0.7\textwidth]{./img/desktop.png} }}
     \qquad
-    \subfloat{{\includegraphics[width=0.2\textwidth]{./img/mobile.jpg} }}
+    \subfloat{{\includegraphics[width=0.22\textwidth]{./img/mobile.jpg} }}
 }
 \caption{Distintas disposiciones de \textit{BART} según las dimensiones del dispositivo}
 \end{figure}
@@ -161,7 +161,6 @@ El contenido principal de la página es la sección dónde se le muestra al usua
 
 La página cuenta con una sección de configuración, dónde el usuario puede elegir que tipo de transformación se le aplica a los cuadros del video. Las transformaciones que provee el sitio son tres: solamente detectar objetos, difuminarlos, o incluso removerlos de la imagen. La naturaleza modular del sistema permite que sea sencillo agregar una transformación de imágenes en el futuro.
 
-% TODO HERE: Reemplazar por billboards
 \begin{figure}[H]
 \makebox[\textwidth][c]{
     \subfloat[\centering Detección]{{\includegraphics[width=0.4\textwidth]{./img/detect.png} }}
@@ -176,12 +175,11 @@ Además, se le permite al usuario seleccionar el modelo a utilizar para la infer
 
 Finalmente, se puede configurar la confianza del modelo, lo cual le permite al usuario ser tan permisivo como le guste con las posibles detecciones del sistema.
 
-% TODO HERE: Reemplazar por billboards
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un valor alto de confianza es más estricto con las detecciones]{{\includegraphics[width=0.4\textwidth]{./img/high-confidence.png} }}
+    \subfloat[\centering Un valor alto de confianza es más estricto con las detecciones]{{\includegraphics[width=0.45\textwidth]{./img/high-confidence.png} }}
     \qquad
-    \subfloat[\centering Un valor bajo de confianza es más permisivo con las detecciones]{{\includegraphics[width=0.4\textwidth]{./img/low-confidence.png} }}
+    \subfloat[\centering Un valor bajo de confianza es más permisivo con las detecciones]{{\includegraphics[width=0.45\textwidth]{./img/low-confidence.png} }}
 }
 \end{figure}
 
@@ -193,9 +191,9 @@ El sitio además cuenta con una sección de estadísticas la cual sirve para pod
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Medición de la velocidad de procesamiento del modelo con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-perf.png} }}
+    \subfloat[\centering Medición de la velocidad de procesamiento del modelo con el tiempo]{{\includegraphics[width=0.5\textwidth]{./img/stats-perf.png} }}
     \qquad
-    \subfloat[\centering Medición de las areas de los objetos detectados con el tiempo]{{\includegraphics[width=0.55\textwidth]{./img/stats-area.png} }}
+    \subfloat[\centering Medición de las areas de los objetos detectados con el tiempo]{{\includegraphics[width=0.5\textwidth]{./img/stats-area.png} }}
 }
 \end{figure}
 
@@ -213,7 +211,7 @@ Una red neuronal es un sistema de capas sucesivas donde cada capa procesa datos 
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./img/CNN.png}}
-\caption{Ejemplo de una red neuronal de 5 capas}
+\caption{Ejemplo de una red neuronal de cinco capas}
 \end{figure}
 
 
@@ -333,9 +331,10 @@ La precisión del modelo debe englobar distintos tipos de aciertos y errores. Lo
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un \textit{falso negativo} es un \textbf{error} donde no se detectó un objeto que sí esta presente]{{\includegraphics[width=0.45\textwidth]{./img/FN.jpg} }}
+    \captionsetup{margin=0cm}
+    \subfloat[\centering Un \textit{falso negativo} es un \textbf{error} donde no se detectó un objeto que sí esta presente]{{\includegraphics[width=0.5\textwidth]{./img/FN.jpg} }}
     \qquad
-    \subfloat[\centering Un \textit{verdadero negativo} es un \textbf{acierto} donde no se detecta ningún objeto ya que realmente no hay ninguno presente]{{\includegraphics[width=0.45\textwidth]{./img/TN.jpg} }}
+    \subfloat[\centering Un \textit{verdadero negativo} es un \textbf{acierto} donde no se detecta ningún objeto ya que realmente no hay ninguno presente]{{\includegraphics[width=0.5\textwidth]{./img/TN.jpg} }}
 }
 \end{figure}
 
@@ -343,9 +342,10 @@ La precisión del modelo debe englobar distintos tipos de aciertos y errores. Lo
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un \textit{verdadero positivo} es el \textbf{acierto} donde se detecta un objeto correctamente]{{\includegraphics[width=0.45\textwidth]{./img/TP.jpg} }}
+    \captionsetup{margin=0cm}
+    \subfloat[\centering Un \textit{verdadero positivo} es el \textbf{acierto} donde se detecta un objeto correctamente]{{\includegraphics[width=0.5\textwidth]{./img/TP.jpg} }}
     \qquad
-    \subfloat[\centering Un \textit{falso positivo} es un \textbf{error} donde se detecta un objeto no presente en la realidad]{{\includegraphics[width=0.45\textwidth]{./img/FP.jpg} }}
+    \subfloat[\centering Un \textit{falso positivo} es un \textbf{error} donde se detecta un objeto no presente en la realidad]{{\includegraphics[width=0.5\textwidth]{./img/FP.jpg} }}
 }
 \end{figure}
 
@@ -362,14 +362,14 @@ La comparación entre estos dos rectángulos (la predicción, y la realidad) nos
 La combinación de estas métricas se conoce como la Intersección sobre la Unión (\textit{IoU}, \textit{Intersection over Union}), y nos provee un único número que varía entre 0 y 1. Un valor de \textit{IoU} de 1 indica una predicción perfecta, mientras que un \textit{IoU} de 0 indica que no hay superposición entre los rectángulos.
 
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{./img/iou.png}}
+\makebox[\textwidth][c]{\includegraphics[width=0.4\textwidth]{./img/iou.png}}
 \caption{Intersección sobre la Unión}
 \end{figure}
 
 Para medir la precisión, se necesita decidir un umbral a partir del cual será considerada como correcta. Por ejemplo, si queremos obtener la precisión promedio con \textit{IoU} 0.5, solo contaremos como correctas las predicciones para las cuales el \textit{IoU} es mayor a 0.5.
 
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/iou-examples.png}}
+\makebox[\textwidth][c]{\includegraphics[width=0.6\textwidth]{./img/iou-examples.png}}
 \caption{Ejemplos de distintos valores de \textit{IoU}}
 \end{figure}
 
@@ -414,7 +414,7 @@ Más allá de los avances de hardware, el ámbito de \textit{Machine Learning} e
 Una parte grande de nuestro trabajo consistió en construir un gran conjunto de datos de buena calidad y que se ajuste a la realidad que buscamos modelar: carteles publicitarios en la vía pública. Utilizando \textit{Roboflow}, obtuvimos varios conjuntos de datos de distintos tamaños y los combinamos de varias maneras para entrenar nuestros modelos. Esto no solo nos ayudó a construir un conjunto de datos suficientemente grande, sino que además nos permitió mitigar sesgos sobre los datos, evitando reducirnos a utilizar carteles de un único país, o sobre un contexto limitado (por ejemplo, solo utilizar carteles de autopistas)
 
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{./img/dataset.png}}
+\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{./img/dataset.png}}
 \caption{Un muestreo de uno de los \textit{datasets} utilizados}
 \end{figure}
 
@@ -489,9 +489,9 @@ Inicialmente la herramienta utilizada para la lectura de los modelos fue \textit
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Usando \textit{OpenCV} como el \textit{runtime} de inferencia, se promedia el procesamiento en 0.3 segundos por cuadro.]{{\includegraphics[width=0.5\textwidth]{./img/opencv.png} }}
+    \subfloat[\centering Usando \textit{OpenCV} como el \textit{runtime} de inferencia, se promedia el procesamiento en 0.3 segundos por cuadro.]{{\includegraphics[width=0.55\textwidth]{./img/opencv.png} }}
     \qquad
-    \subfloat[\centering \textit{ONNX Runtime} puede darnos un rendimiento de 0.15 segundos por cuadro con pocas modificaciones.]{{\includegraphics[width=0.5\textwidth]{./img/ort.png} }}
+    \subfloat[\centering \textit{ONNX Runtime} puede darnos un rendimiento de 0.15 segundos por cuadro con pocas modificaciones.]{{\includegraphics[width=0.55\textwidth]{./img/ort.png} }}
 }
 \end{figure}
 
@@ -501,9 +501,9 @@ Haciendo una evaluación de nuestro servidor con múltiples \textit{CPUs} de dis
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un procesador de 1\textit{GB} promedia el procesamiento de cuadros en 0.2 segundos por cuadro]{{\includegraphics[width=0.5\textwidth]{./img/ort-1gb.png} }}
+    \subfloat[\centering Un procesador de 1\textit{GB} promedia el procesamiento de cuadros en 0.2 segundos por cuadro]{{\includegraphics[width=0.55\textwidth]{./img/ort-1gb.png} }}
     \qquad
-    \subfloat[\centering Un procesador de 16\textit{GB} redujo el procesamiento a la mitad, promediando en 0.1 segundos por cuadro]{{\includegraphics[width=0.5\textwidth]{./img/ort-16gb.png} }}
+    \subfloat[\centering Un procesador de 16\textit{GB} redujo el procesamiento a la mitad, promediando en 0.1 segundos por cuadro]{{\includegraphics[width=0.55\textwidth]{./img/ort-16gb.png} }}
 }
 \end{figure}
 
@@ -576,7 +576,7 @@ En particular hacemos uso del componente externo \texttt{streamlit-webrtc} \cite
 El protocolo de comunicación utilizado en nuestro sistema es \textit{WebRTC}, el cual se basa en coordinar conexiones \textit{peer-to-peer} entre dos dispositivos (en nuestro caso, de nuestro servidor al explorador web del usuario). Ya que no se puede establecer una conexión directa entre dos pares si no se sabe siquiera donde residen, para poder establecer estas conexiones \textit{WebRTC} requiere de servidores externos que se encargan del descubrimiento (\textit{discovery}) de los pares, que se denominan \textit{STUN} y \textit{TURN}.
 
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/webrtc.png}}
+\makebox[\textwidth][c]{\includegraphics[width=0.8\textwidth]{./img/webrtc.png}}
 \caption{\textit{WebRTC} hace uso de servidores \textit{STUN} y \textit{TURN} para establecer las conexiones par-a-par a través de \textit{WebSockets}}
 \end{figure}
 
@@ -703,6 +703,7 @@ Con estos últimos ajustes terminamos con un trabajo que cumple los objetivos es
 
 \end{itemize}
 
+\newpage
 \section{Conclusiones y Trabajo Futuro}
 
 Finalizando, notamos distintas lecciones y aprendizajes que tomamos del desarrollo del trabajo en su totalidad, y rumbos posibles que se nos ocurren para el sistema en un futuro. \\
