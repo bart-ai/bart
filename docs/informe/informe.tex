@@ -1,5 +1,3 @@
-% TODO HERE: ajustar todos los tamaños de imagenes
-
 \documentclass[a4paper]{article}
 
 \usepackage[T1]{fontenc}
@@ -7,16 +5,17 @@
 
 \usepackage{subfig,graphicx, geometry, array, booktabs, float, hyperref, setspace}
 
+% Make text height 5% larger than the default
+\setlength{\textheight}{1.05\textheight}
+
 % Remove labels and center all captions
 \captionsetup[subfigure]{labelformat=empty,justification=centering}
-\captionsetup{justification=centering,labelformat=empty}
-
-\usepackage[dvipsnames]{xcolor}
+\captionsetup{justification=centering,margin=0.7cm,labelformat=empty}
 
 % Include references on TOC
 \usepackage[nottoc,numbib]{tocbibind}
 
-
+\usepackage[dvipsnames]{xcolor}
 \hypersetup{
     colorlinks=true,
     linkcolor=black,
@@ -69,15 +68,10 @@
             100017
         \end{flushright}
     \end{minipage}
-
+    \restoregeometry
 \end{titlepage}
 
-\restoregeometry
-
-\newgeometry{top=1.2in}
 \tableofcontents
-\restoregeometry
-
 \newpage
 
 \section{Motivación}
