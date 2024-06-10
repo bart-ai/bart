@@ -96,7 +96,7 @@ El presente trabajo mostrará cómo se cumplieron estos objetivos a lo largo del
 
 \section{Descripción del Problema}
 
-El núcleo de nuestro trabajo tiene una división lógica en dos problemas distintos.
+El núcleo de nuestro trabajo tiene una división lógica en dos problemas distintos. \\
 
 Para comenzar, hablamos de \textbf{\textit{detectar} anuncios}. Lo que queremos decir con esto es que buscamos implementar un \textit{software} que, al mostrarle una imagen, nos sepa determinar exáctamente en qué parte de la misma se encuentra algo que consideramos como un anuncio, si es que este anuncio está presente.
 Este tipo de problema cae bajo el campo de \textit{Computer Vision}, una rama de la inteligencia artificial que se dedica a comprender datos visuales y poder interpretar su contenido.
@@ -128,11 +128,9 @@ El desafío principal de la detección de objetos es lograr una detección preci
 
 Originalmente nuestra propuesta mínima de trabajo fue desarrollar una herramienta de procesamiento de video pregrabado que se ejecute localmente por línea de comando y devuelva un video procesado como salida.
 
-Si bien este era nuestro objetivo mínimo, consideramos que una de las principales metas del trabajo es entregar una experiencia de usuario con una interfaz mejor a la de línea de comando que pueda ser utilizado desde cualquier parte, sin requerir ningún tipo de instalación previa y que permitiera mostrar el video procesado en tiempo real.
+Si bien este era nuestro objetivo mínimo, consideramos que una de las principales metas del trabajo es entregar una experiencia de usuario con una interfaz mejor a la de línea de comando, que pueda ser utilizado desde cualquier parte, sin requerir ningún tipo de instalación previa y que permitiera mostrar el video procesado en tiempo real.
 
-La interfaz ideal que cumple con todos estos requisitos, es la de un sitio web.
-
-El hecho de usar un sitio web para disponibilizar nuestro sistema nos da dos posibles arquitecturas a evaluar. Por un lado tenemos la arquitectura cliente-servidor, mientras que su contraposición natural es un sistema que sea ejecutado solamente en el cliente local.
+La interfaz ideal que cumple con todos estos requisitos, es la de un sitio web. El hecho de usar un sitio web para disponibilizar nuestro sistema nos da dos posibles arquitecturas a evaluar. Por un lado tenemos la arquitectura cliente-servidor, mientras que su contraposición natural es un sistema que sea ejecutado solamente en el cliente local.
 
 En una arquitectura cliente-servidor, la capacidad computacional del cliente no es relevante, pero la complejidad principal del sistema recae en poder minimizar la latencia entre el cliente y el servidor.
 
@@ -142,15 +140,15 @@ Por otro lado, en una arquitectura sin servidor donde todo se ejecuta localmente
 
 \subsection{\textit{BART}}
 
-El resultado final del trabajo es \textit{\textbf{BART}} (Blocking Ads In Real Time), un \textit{software} accesible a través de una página web desplegada en \url{https://bart.fly.dev/}, el cual fue desarrollado en \url{https://github.com/bart-ai/bart/}.
+El resultado final del trabajo es \textit{\textbf{BART}} (\textit{Blocking Ads In Real Time}), un \textit{software} accesible a través de una página web desplegada en \url{https://bart.fly.dev/}, el cual fue desarrollado en \url{https://github.com/bart-ai/bart/}.
 
 El objetivo de esta página es tomar los cuadros de la cámara del dispositivo del usuario y poder procesarlos con nuestro sistema. El procesamiento de estos cuadros consiste en detectar si hay un anuncio presente (específicamente: un cartel publicitario), indicar en qué región del cuadro está presente el anuncio y presentarle esta detección al usuario.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat{{\includegraphics[width=0.7\textwidth]{./img/desktop.png} }}
+    \subfloat{{\includegraphics[width=0.58\textwidth]{./img/desktop.png} }}
     \qquad
-    \subfloat{{\includegraphics[width=0.22\textwidth]{./img/mobile.jpg} }}
+    \subfloat{{\includegraphics[width=0.18\textwidth]{./img/mobile.jpg} }}
 }
 \caption{Distintas disposiciones de \textit{BART} según las dimensiones del dispositivo}
 \end{figure}
@@ -164,9 +162,9 @@ La página cuenta con una sección de configuración, donde el usuario puede ele
 \begin{figure}[H]
 \makebox[\textwidth][c]{
     \subfloat[\centering Detección]{{\includegraphics[width=0.4\textwidth]{./img/detect.png} }}
-    \qquad
+    \quad
     \subfloat[\centering Difuminado]{{\includegraphics[width=0.4\textwidth]{./img/blur.png} }}
-    \qquad
+    \quad
     \subfloat[\centering Eliminación]{{\includegraphics[width=0.4\textwidth]{./img/inpaint.png} }}
 }
 \end{figure}
@@ -203,7 +201,7 @@ Esta última funcionalidad la ideamos con el fin de entender cuán presente est�
 
 \subsection{Detección de Anuncios}
 
-\subsubsection{Redes Neuronales Conolucionales}
+\subsubsection{Redes Neuronales Convolucionales}
 
 En \textit{Computer Vision}, la clasificación y detección de objetos en una imagen se hace a través de redes neuronales convolucionales.
 
@@ -211,7 +209,7 @@ Una red neuronal es un sistema de capas sucesivas donde cada capa procesa datos 
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{./img/CNN.png}}
-\caption{Ejemplo de una red neuronal de cinco capas}
+\caption{Ejemplo de una red neuronal de cinco capas \scriptsize{\href{https://alexlenail.me/NN-SVG/index.html}{(ref)}}}
 \end{figure}
 
 
@@ -220,30 +218,30 @@ Una imagen se codifica en forma de matriz: cada elemento representa un píxel y 
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/matrix.png}}
-\caption{Una posible representación de una imagen es una matriz por cada canal de color (rojo, verde, azul)}
+\caption{Una posible representación de una imagen es una matriz por cada canal de color (rojo, verde, azul) \scriptsize{\href{https://www.researchgate.net/publication/282798184_The_project_is_based_on_emerging_field_Image_Processing_In_this_project_A_Graphical_User_Interface_has_been_designed_using_the_software_Labwindows_which_can_process_both_type_of_Real_time_Image_Proces}{(ref)}}}
 \end{figure}
 
 Al ser los datos de entrada una matriz numérica, cada capa de la red neuronal debe realizar transformaciones mediante operaciones matriciales. La operación matemática fundamental de estas redes es la convolución: consiste en deslizar una matriz pequeña de filtro sobre la entrada y acumular los productos resultantes para producir una nueva matriz de salida, la cual se utilizará como entrada en la siguiente capa de la red.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.9\textwidth]{./img/convolution.png}}
-\caption{Las distintas convoluciones de cada capa nos permiten extraer características de la imagen}
+\caption{Las distintas convoluciones de cada capa nos permiten extraer características de la imagen \scriptsize{\href{https://doi.org/10.1007/s00371-020-01878-6}{(ref)}}}
 \end{figure}
 
 De esta manera, cada capa reduce la matriz original y extrae características relevantes de la imagen, permitiendo la detección de patrones en ella. Este proceso continua hasta tener un resultado final de las características aprendidas.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{./img/cnn-skel.png}}
-\caption{Una \textit{CNN} toma una imagen de entrada y luego de varios pasos termina en una clasificación de esta}
+\caption{Una \textit{CNN} toma una imagen de entrada y luego de varios pasos termina en una clasificación de esta \scriptsize{\href{https://nafizshahriar.medium.com/what-is-convolutional-neural-network-cnn-deep-learning-b3921bdd82d5}{(ref)}}}
 \end{figure}
 
 \subsubsection{\textit{Transfer Learning}}
 
 En los últimos años, el campo de la inteligencia artificial avanzó en niveles exponenciales, no solo con conceptos y tecnologías nuevas, sino que además mejorando considerablemente la experiencia de usuario, permitiéndole a los desarrolladores de \textit{software} no necesitar ser expertos en la disciplina para poder experimentar con los últimos avances.
 
-Si bien es posible desarrollar a bajo nivel, donde se puede diseñar la arquitectura de una red neuronal y luego entrenar un modelo partiendo desde cero, lo más usual es la refinación sobre modelos ya existentes. \textit{Transfer Learning} es exactamente eso: partir de un modelo existente y adecuarlo a un nuevo problema. Tomando un modelo generalista de detección de objetos, se utilizan datos de clases de objetos específicos para entrenar un nuevo modelo que cumpla las necesidades del proyecto.\\
+Si bien es posible desarrollar a bajo nivel, donde se puede diseñar la arquitectura de una red neuronal y luego entrenar un modelo partiendo desde cero, lo más usual es la refinación sobre modelos ya existentes. \textit{Transfer Learning} es exactamente eso: partir de un modelo existente y adecuarlo a un nuevo problema. Tomando un modelo generalista de detección de objetos, se utilizan datos de clases de objetos específicos para entrenar un nuevo modelo que cumpla las necesidades del proyecto.\medskip
 
-Partiendo desde un modelo pre-entrenado basado en la familia de algoritmos \textit{YOLO}, nuestro trabajo consiste en optimizar el entrenamiento de un nuevo modelo que cumpla nuestros requerimientos específicos: en nuestro caso, detección de carteles publicitarios.
+Partiendo desde un modelo pre-entrenado basado en la familia de algoritmos \textit{YOLO}, nuestro trabajo consiste en optimizar el entrenamiento de un nuevo modelo que cumpla nuestros requerimientos específicos: en nuestro caso, la detección de carteles publicitarios.
 
 \textit{YOLO}, \textit{You Only Look Once} \cite{yolov1}, es un tipo de algoritmo de detección de objetos en tiempo real introducido en 2016 que rápidamente demostró ser una alternativa superior a los métodos existentes. A diferencia de otros métodos de detección de objetos que pasan una imagen a través de la red varias veces, \textit{YOLO} realiza todas las predicciones con una sola pasada a través de la red, lo que lo hace extremadamente rápido y la mejor opción para nuestro trabajo.
 
@@ -251,17 +249,17 @@ En nuestro caso hicimos uso de la implementación de \textit{YOLO} que ofrece \t
 
 \subsubsection{Entrenamiento de la Red}
 
-El entrenamiento de una red convolucional partiendo de un modelo pre-entrenado consiste en utilizar un \textit{dataset} de imágenes nuevo que se ajuste a las especificidades del nuevo problema. En nuestro caso necesitamos obtener distintos \textit{dataset} de imágenes de entrenamiento que contenga carteles publicitarios en la vía pública.
+El entrenamiento de una red convolucional partiendo de un modelo pre-entrenado consiste en utilizar un \textit{dataset} de imágenes nuevo que se ajuste a las especificidades del nuevo problema. En nuestro caso necesitamos obtener distintos \textit{datasets} de imágenes de entrenamiento que contenga carteles publicitarios en la vía pública.
 
-Considerando que queremos partir de una cantidad considerable de imágenes para el entrenamiento, si bien una de las posibilidades que se presentan en este tipo de proyectos es tomar las fotos de manera manual, lo más usual es recurrir a conjuntos de datos ya curados para otros proyectos que se adecuen a nuestros propósitos. Un portal que deja a disposición distintos \textit{datasets} públicos es \textit{Roboflow} \cite{roboflow} y de allí tomamos las imágenes deseadas.\\
+Considerando que queremos partir de una cantidad considerable de imágenes para el entrenamiento, si bien una de las posibilidades que se presentan en este tipo de proyectos es tomar las fotos de manera manual, lo más usual es recurrir a conjuntos de datos ya curados para otros proyectos que se adecuen a nuestros propósitos. Un portal que deja a disposición distintos \textit{datasets} públicos es \textit{Roboflow} \cite{roboflow} y de allí tomamos las imágenes deseadas.\medskip
 
-Como punto de comparación y caso de estudio para comprender el proceso, se tiene un modelo pre-entrenado sobre el \textit{dataset} \textit{Open Images} \cite{openimages}, un conjunto de datos clasificado en múltiples tipos de objetos (autos, animales, carteles, etc.), el cual fue de gran uso al comenzar el proyecto cuando no se disponía de un modelo propio.
+Como punto de comparación y caso de estudio para comprender el proceso, se tiene un modelo pre-entrenado sobre el \textit{dataset} \textit{Open Images} \cite{openimages}, un conjunto de datos clasificado en múltiples tipos de objetos (autos, animales, carteles, etc.), el cual fue de gran utilidad al comenzar el proyecto cuando no se disponía de un modelo propio.
 
 \subsubsection{Interpretación del Modelo}
 
 La interpretación de un modelo es un proceso enteramente separado de su construcción que consiste en la \textbf{inferencia}: ejecutar el modelo sobre información nueva y tomar conclusiones de esta.
 
-Independientemente del armado del modelo, se debe tener un sistema en funcionamiento para su lectura y ejecución sobre las imágenes a predecir, que no necesariamente debe utilizar las mismas herramientas que se usaron en el entrenamiento de este.
+Independientemente del armado del modelo, se debe tener un sistema en funcionamiento para su lectura y ejecución sobre las imágenes a predecir que no necesariamente debe utilizar las mismas herramientas que se usaron en el entrenamiento de este.
 
 Para las tareas de manipulación de imágenes y la inferencia sobre ellas la principal herramienta que utilizamos es \textit{OpenCV} \cite{opencv}: una biblioteca de funciones especializada en \textit{Computer Vision} que provee un entorno de desarrollo en \textit{Python}, el lenguaje de programación utilizado en todo el proyecto.
 
@@ -273,7 +271,7 @@ Como mencionamos previamente, el objetivo del trabajo es disponibilizar la aplic
 
 Inicialmente creíamos que la velocidad de la red nunca iba a ser suficiente para soportar una arquitectura cliente-servidor, por lo tanto comenzamos probando hacer la detección exclusivamente en el cliente.
 
-Buscando interoperabilidad entre el entorno web y los lenguajes de programación de desarrollo que no afectara el rendimiento resultante, recurrimos a \textit{WebAssembly} \cite{wasm}. \textit{WASM} es un estándar en crecimiento de adopción desarrollado para ejecutarse dentro de navegadores web, sin importar el lenguaje de desarrollo, ya que implica una compilación del lenguaje de entrada a instrucciones binarias.\\
+Buscando interoperabilidad entre el entorno web y los lenguajes de programación de desarrollo que no afectara el rendimiento resultante, recurrimos a \textit{WebAssembly} \cite{wasm}. \textit{WASM} es un estándar en crecimiento de adopción desarrollado para ejecutarse dentro de navegadores web, sin importar el lenguaje de desarrollo, ya que implica una compilación del lenguaje de entrada a instrucciones binarias.\medskip
 
 Utilizando \textit{Pyodide} \cite{pyodide}, un compilador de \textit{Python} a \textit{WebAssembly}, se pudo obtener una prueba de concepto del sitio web que se ejecutara enteramente en el dispositivo, sin depender de un servicio externo. Lamentablemente, la compilación de \textit{Python} a \textit{WASM} implica compilar el intérprete completo de \textit{Python} en vez de solamente las instrucciones de nuestro sistema. Esto provoca un rendimiento extremadamente por debajo de lo deseado, lo cual muestra una de las grandes falencias de \textit{WebAssembly}: si bien el objetivo final del estándar es ejecutar cualquier lenguaje de programación en un explorador web, el rendimiento es aceptable solamente en lenguajes compilados (\textit{Rust}, \textit{Go}, \textit{C}) y no interpretados (\textit{Python}), al menos hasta que se encuentre una solución que no involucre compilar intérpretes completos.
 
@@ -285,7 +283,7 @@ Frente a una arquitectura cliente-servidor es fundamental la velocidad de conexi
 
 Necesitamos mandar los cuadros al servidor para que este pueda detectarlos y luego mandarlos al cliente de vuelta, quien recién ahí puede mostrarlos al usuario. Es importante que esto suceda rápido dado que de lo contrario se perdería el componente de ``tiempo real'' y el video resultado aparecería muy desfasado de la realidad.
 
-Este requerimiento colisiona directamente con nuestra idea de que la aplicación será usada principalmente en la vía pública, dado que es el lugar donde peor conexión uno va a tener comparado a una conexión \textit{WiFi} estable en un hogar.\\
+Este requerimiento colisiona directamente con nuestra idea de que la aplicación será usada principalmente en la vía pública, dado que es el lugar donde peor conexión uno va a tener comparado a una conexión \textit{WiFi} estable en un hogar.\medskip
 
 Para lograr una detección en tiempo real hicimos uso de \textit{WebRTC} \cite{webrtc}. Se trata de un protocolo moderno que permite comunicaciones par-a-par y en tiempo real, con interfaces nativas del navegador, por lo que no requiere ningún tipo de complemento. Es utilizado principalmente en aplicaciones de llamadas de voz, video, chat y para compartir archivos entre navegadores.
 
@@ -299,13 +297,13 @@ Para poner en funcionamiento nuestro sistema utilizamos \textit{Fly.io} \cite{fl
 
 \section{Implementación}
 
-La implementación del sistema final tiene tres componentes principales. Por empezar, se tuvo que desarrollar un flujo que nos permitiera experimentar en el armado de modelos de redes neuronales convolucionales, comenzando por definir de qué manera podemos decidir que un modelo es apto para el sistema y utilizando herramientas para la comparación entre los distintos experimentos. Por otro lado tenemos la lectura que se hace de estos modelos, utilizándolos para inferir sobre videos del usuario. Para finalizar, integrando ambas partes y proveyendo una presentación del sistema en su totalidad, se evaluaron distintas alternativas del despliegue web que une todas las partes.
+La implementación del sistema final tiene tres componentes principales. Por empezar, se tuvo que desarrollar un flujo que nos permitiera experimentar en el armado de modelos de redes neuronales convolucionales, comenzando por definir de qué manera podemos decidir que un modelo es apto para el sistema y utilizando herramientas para la comparación entre los distintos experimentos. Por otro lado tenemos la lectura que se hace de estos modelos, utilizándolos para inferir sobre videos del usuario Por último, integrando ambas partes y proveyendo una presentación del sistema en su totalidad, se evaluaron distintas alternativas del despliegue web que une todas las partes.
 
 \subsection{Modelo}
 
 \subsubsection{¿Qué es un buen modelo?}
 
-Para lograr un sistema de detección que satisfaga las demandas del proyecto, fue necesario definir qué atributos de calidad deben ser priorizados y utilizados para la comparación de las distintas alternativas e ideas que vayan surgiendo.\\
+Para lograr un sistema de detección que satisfaga las demandas del proyecto, fue necesario definir qué atributos de calidad deben ser priorizados y utilizados para la comparación de las distintas alternativas e ideas que vayan surgiendo.\medskip
 
 Los atributos de calidad priorizados para nuestros modelos son:
 
@@ -349,7 +347,7 @@ La precisión del modelo debe englobar distintos tipos de aciertos y errores. Lo
 }
 \end{figure}
 
-Entender si una predicción es correcta o no, dentro del área de detección de objetos en imágenes, no es una tarea simple. Un modelo que detecta objetos dentro de imágenes va a dar como resultado el mínimo rectángulo que contiene al objeto deseado, y este resultado debe ser comparado contra el rectángulo verdadero donde se ubica el objeto.\\
+Entender si una predicción es correcta o no, dentro del área de detección de objetos en imágenes, no es una tarea simple. Un modelo que detecta objetos dentro de imágenes va a dar como resultado el mínimo rectángulo que contiene al objeto deseado, y este resultado debe ser comparado contra el rectángulo verdadero donde se ubica el objeto.\medskip
 
 La comparación entre estos dos rectángulos (la predicción, y la realidad) nos provee dos piezas de información que determinan cuán correcta es la predicción:
 
@@ -363,14 +361,14 @@ La combinación de estas métricas se conoce como la Intersección sobre la Uni�
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.4\textwidth]{./img/iou.png}}
-\caption{Intersección sobre la Unión}
+\caption{Intersección sobre la Unión \scriptsize{\href{https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/}{(ref)}}}
 \end{figure}
 
 Para medir la precisión, se necesita decidir un umbral a partir del cual será considerada como correcta. Por ejemplo, si queremos obtener la precisión promedio con \textit{IoU} 0.5, solo contaremos como correctas las predicciones para las cuales el \textit{IoU} es mayor a 0.5.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.6\textwidth]{./img/iou-examples.png}}
-\caption{Ejemplos de distintos valores de \textit{IoU}}
+\caption{Ejemplos de distintos valores de \textit{IoU} \scriptsize{\href{https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/}{(ref)}}}
 \end{figure}
 
 Dado que la calidad de una predicción es una escala, no nos sirve quedarnos solamente con la precisión con \textit{IoU} 0.5. Lo que se busca es medir la precisión del modelo en varios niveles de \textit{IoU} y luego promediarlos, para obtener una métrica que nos permite comparar dos modelos distintos. Esta métrica se denomina \textit{Mean Average Precision} (\textit{mAP}) y es utilizada frecuentemente en evaluación y comparación de modelos de redes neuronales ya que cumple el objetivo de proporcionar una evaluación amplia y completa del rendimiento del modelo.
@@ -381,7 +379,7 @@ Utilizando un umbral entre 0.5 y 0.95 para esta métrica (denominado \textit{mAP
 
 Como mencionamos previamente, la arquitectura de una red neuronal convolucional consiste de capas que aplican transformaciones hasta llegar a un resultado final. Mientras más capas tenga una red, mejor va a ser la precisión y calidad de la inferencia, ya que extrae más información de los datos de entrada. Naturalmente, debido al agregado al proceso, aumentar la cantidad de capas también va a hacer más lenta cada inferencia. Es decir, un sistema de inferencia con más capas tiende a ser más preciso, a costa de que sea un procesamiento más intensivo y por ende más lento.
 
-Es por esto que es muy importante elegir correctamente la arquitectura de la red neuronal del modelo, teniendo en cuenta lo que el proyecto requiere, ya sea un sistema lento pero preciso, un sistema veloz pero de menor calidad de inferencia, o un balance que tenga en consideración ambos atributos. \\
+Es por esto que es muy importante elegir correctamente la arquitectura de la red neuronal del modelo, teniendo en cuenta lo que el proyecto requiere, ya sea un sistema lento pero preciso, un sistema veloz pero de menor calidad de inferencia, o un balance que tenga en consideración ambos atributos. \medskip
 
 La implementación \textit{YOLOv8} de \textit{Ultralytics} no solo permite entrenar un modelo de una red neuronal sin base alguna, sino que también ofrece distintos modelos basados en redes de distintos tamaños (\textit{nano}, \textit{small}, \textit{medium}, \textit{large} y \textit{xlarge}) donde cada modelo base se adapta a diferentes necesidades y recursos computacionales.
 
@@ -395,15 +393,15 @@ Además de la arquitectura de la red, un componente primordial en el modelo resu
 
 Para los problemas de detección de objetos se utiliza un sistema de entrenamiento supervisado. Esto significa que por cada predicción que el modelo haga durante la etapa de entrenamiento uno ya conoce el resultado correcto y puede comparar la predicción del modelo contra lo que conoce, permitiéndole ajustar el modelo de acuerdo a si acertó o no.
 
-El conjunto total de los datos que se usan para entrenar se debe dividir en tres subconjuntos: \textit{train}, \textit{test} y \textit{validate}.\\
+El conjunto total de los datos que se usan para entrenar se debe dividir en tres subconjuntos: \textit{train}, \textit{test} y \textit{validate}.\medskip
 
 La mayoría de los datos deberán ir en el subconjunto de \textit{train} ya que son las predicciones que el modelo hará en las iteraciones de entrenamiento. Es importante tener un conjunto de \textit{train} con un volumen grande de datos, con sus resultados bien clasificados y que sean imágenes de buena calidad, lo más similar posible a la realidad que queremos modelar.
 
-El subconjunto de \textit{validate} se utiliza para evaluar al modelo luego de una cierta cantidad de iteraciones del entrenamiento y así poder recalibrarlo a medida que avanza el proceso. De esta forma se garantiza que el modelo no esté simplemente memorizando los datos de entrenamiento, sino que esté aprendiendo patrones que puedan generalizarse a nuevos datos.
+Durante el entrenamiento, el subconjunto de \textit{validate} se utiliza para evaluar al modelo luego de una cierta cantidad de iteraciones y así poder recalibrar el entrenamiento a medida que avanza el proceso. De esta forma se garantiza que el modelo no esté simplemente memorizando los datos de entrenamiento, sino que esté aprendiendo patrones que puedan generalizarse a nuevos datos.
 
-Una vez finalizadas las iteraciones de entrenamiento se va a utilizar el subconjunto de \textit{test} para obtener la precisión del modelo en ejemplos que nunca vio. Es importante que usemos datos para \textit{test} que no se encuentran ni en \textit{validate} ni en \textit{train} dado que sino estaríamos probando el modelo contra resultados que ya conoce, en vez de evaluar su rendimiento en ``el mundo real''. Dado que nos es crucial comparar distintos modelos entre sí, es fundamental que en esta etapa utilicemos los mismos datos para todos los modelos entrenados en el sistema, en vez de utilizar distintos subconjuntos para cada modelo, ya que de esta manera podemos garantizar una evaluación consistente y objetiva de qué modelo funciona mejor.\\
+Una vez finalizado el entrenamiento se va a utilizar el subconjunto de \textit{test} para obtener la precisión del modelo en ejemplos que nunca vio. Es importante que usemos datos para \textit{test} que no se encuentran ni en \textit{validate} ni en \textit{train} dado que sino estaríamos probando el modelo contra resultados que ya conoce, en vez de evaluar su rendimiento en ``el mundo real''. Dado que nos es crucial comparar distintos modelos entre sí, es fundamental que en esta etapa utilicemos los mismos datos para todos los modelos entrenados en el sistema, en vez de utilizar distintos subconjuntos para cada modelo, ya que de esta manera podemos garantizar una evaluación consistente y objetiva de qué modelo funciona mejor.\medskip
 
-Una etapa opcional aplicada en el proceso de entrenamiento del modelo es el ajuste de hiperparámetros (o \textit{Hyperparameter Tuning}), donde se busca determinar la configuración óptima para el entrenamiento del modelo sobre el dataset particular que se utilice. Este procedimiento es fundamental para maximizar el rendimiento del modelo, ya que distintas combinaciones de hiperparámetros pueden resultar en entrenamientos muy diversos. No existe una configuración perfecta que sea universalmente aplicable a todos los modelos sobre todos los \textit{datasets}, sino que es necesario explorar diversas combinaciones de valores y evaluar cuál se adapta mejor a las necesidades específicas del proyecto en cuestión.\\
+Una etapa opcional aplicada en el proceso de entrenamiento del modelo es el ajuste de hiperparámetros (o \textit{Hyperparameter Tuning}), donde se busca determinar la configuración óptima para el entrenamiento del modelo sobre el \textit{dataset} particular que se utilice. Este procedimiento es fundamental para maximizar el rendimiento del modelo, ya que distintas combinaciones de hiperparámetros pueden resultar en entrenamientos muy diversos. No existe una configuración perfecta que sea universalmente aplicable a todos los modelos sobre todos los \textit{datasets}, sino que es necesario explorar diversas combinaciones de valores y evaluar cuál se adapta mejor a las necesidades específicas del proyecto en cuestión.\medskip
 
 El entrenamiento es un proceso muy costoso en el cual se invierten recursos computacionales y mucho tiempo, llegando a tomar múltiples días para poder finalizar un solo experimento. El aprendizaje supervisado no es un problema que se puede solucionar simplemente dedicando más horas al entrenamiento: un entrenamiento de 72 horas puede dar los mismos resultados que uno de 2 horas.
 
@@ -418,9 +416,11 @@ Una parte grande de nuestro trabajo consistió en construir un gran conjunto de 
 \caption{Un muestreo de uno de los \textit{datasets} utilizados}
 \end{figure}
 
-Otra opción ponderada fue la de construir nuestro propio conjunto de datos: sacar fotos de carteles publicitarios nosotros mismos y delimitar los rectángulos minimales manualmente para lograr tener un conjunto de datos que sabemos que son orgánicos y aún más ajustados al proyecto. Buscando minimizar los sesgos que nosotros introduciríamos (nuestras fotos serían solamente de un conjunto de calles cercanas a nosotros, siempre tomadas con los mismos dispositivos, probablemente con ángulos parecidos, etc.) y sabiendo que se requiere una magnitud considerable para la experimentación en el entrenamiento (por lo que sería un trabajo que abarcaría mucho tiempo), esta idea fue tenida en cuenta solamente en caso de no encontrar \textit{datasets} abiertos de buena calidad. \\
+Otra opción ponderada fue la de construir nuestro propio conjunto de datos: sacar fotos de carteles publicitarios nosotros mismos y delimitar los rectángulos minimales manualmente para lograr tener un conjunto de datos que sabemos que son orgánicos y aún más ajustados al proyecto. Buscando minimizar los sesgos que nosotros introduciríamos (nuestras fotos serían solamente de un conjunto de calles cercanas a nosotros, siempre tomadas con los mismos dispositivos, probablemente con ángulos parecidos, etc.) y sabiendo que se requiere una magnitud considerable para la experimentación en el entrenamiento (por lo que sería un trabajo que abarcaría mucho tiempo), esta idea fue tenida en cuenta solamente en caso de no encontrar \textit{datasets} abiertos de buena calidad. \medskip
 
-Además de combinar todos los \textit{datasets} que encontramos para obtener un gran volumen de datos, decidimos aplicar dos técnicas conocidas para mejorar la calidad de nuestros datos. Por un lado agregamos lo que se denominan \textit{Negative Images}: fotos donde no se encuentra ningún objeto a detectar. Esto busca que el modelo entienda que no siempre va a haber un cartel publicitario para detectar, por lo tanto debería bajar el número de predicciones categorizadas como falsos positivos (detectar un cartel donde no lo hay). Para lograr esto utilizamos el dataset de \textit{COCO} \cite{coco}, un conjunto de imágenes ya previamente clasificadas, donde filtramos imágenes de la vía pública que no tuvieran carteles, pero sí contengan personas, autos o bicicletas.
+Además de combinar los \textit{datasets} que encontramos para obtener un gran volumen de datos, decidimos aplicar dos técnicas conocidas para mejorar la calidad de nuestros datos.
+
+Por un lado agregamos lo que se denominan \textit{Negative Images}: fotos donde no se encuentra ningún objeto a detectar. Esto busca que el modelo entienda que no siempre va a haber un cartel publicitario para detectar, por lo tanto debería bajar el número de predicciones categorizadas como falsos positivos (detectar un cartel donde no lo hay). Para lograr esto utilizamos el \textit{dataset} de \textit{COCO} \cite{coco}, un conjunto de imágenes ya previamente clasificadas, donde filtramos imágenes de la vía pública que no tuvieran carteles, pero sí contengan personas, autos o bicicletas.
 
 Por otro lado, aplicamos otra técnica para incrementar el volumen de nuestros datos denominada \textit{Data Augmentation}: artificialmente generar nuevas imágenes de entrenamiento, transformando las originales. Aplicando transformaciones aleatorias pero que reflejan situaciones reales, uno puede rotar, re-escalar, invertir y recortar imágenes que ya tiene en su conjunto para así influir al modelo a adaptarse mejor a situaciones desfavorables donde la cámara puede estar rotada, el cartel puede verse por la mitad o simplemente tener una imagen de peor calidad.
 
@@ -430,12 +430,12 @@ Una vez determinadas las métricas para comparar modelos y un flujo para entrena
 
 \textit{Comet} nos permitió centralizar el resultado de todos los entrenamientos y poder observar fácilmente la comparación entre las métricas de precisión ya mencionadas. Esto nos ayudó a decidir qué modelos descartar y qué modelos disponibilizar a través de la aplicación web.
 
-Al finalizar la búsqueda de datasets, la exploración de hiperparámetros y optimizar el proceso de entrenamiento, llegamos al armado de seis distintos modelos, todos basados en distintos datasets, los cuales debemos analizar frente a los atributos que priorizamos al comienzo del proceso.
-
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{./img/comet-map.png}}
+\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{./img/comet-map.png}}
 \caption{Una comparación en \textit{Comet} de distintos valores de \textit{mAP50-95} para algunos de nuestros modelos finales}
 \end{figure}
+
+Al finalizar la búsqueda de \textit{datasets}, la exploración de hiperparámetros y optimizar el proceso de entrenamiento, llegamos al armado de seis distintos modelos, todos basados en distintos \textit{datasets}, los cuales debemos analizar frente a los atributos que priorizamos al comienzo del proceso. \medskip
 
 En resumen, la velocidad de un modelo recae principalmente sobre la arquitectura de la red, mientras que la precisión es lo que se refina con el entrenamiento.
 
@@ -483,15 +483,16 @@ En cuanto a la precisión, siempre basándonos en el modelo \textit{nano}, dejam
 
 Además de existir múltiples formas de construir y entrenar un modelo, también existen múltiples formas de ejecutarlos, creando un problema de interoperabilidad donde el formato de salida del entrenamiento puede no coincidir con el formato de entrada de la inferencia.
 
-Buscando una interfaz unificada entre estos dos polos, llegamos a \textit{ONNX}, \textit{The Open Neural Network Exchange} \cite{onnx}, ecosistema que busca estandarizar y unificar la ejecución de los modelos \textit{Machine Learning} para poder fácilmente moverse entre distintas plataformas durante todo el proceso. \\
+Buscando una interfaz unificada entre estos dos polos, llegamos a \textit{ONNX}, \textit{The Open Neural Network Exchange} \cite{onnx}, un ecosistema que busca estandarizar y unificar la ejecución de los modelos \textit{Machine Learning} para poder fácilmente moverse entre distintas plataformas durante todo el proceso. \medskip
 
 Inicialmente, la herramienta utilizada para la lectura de los modelos fue \textit{OpenCV}, una de las principales bibliotecas de nuestro sistema que utilizamos para la preparación de los cuadros y la transformación de estos. Si bien \textit{OpenCV} es compatible con el formato \textit{ONNX}, no tiene las mejoras necesarias para tener un rendimiento optimo. La herramienta final que utilizamos en la etapa de inferencia es \textit{ONNX Runtime} \cite{ort}, cuya lectura de modelos en formato \textit{ONNX} tiene más madurez que la de \textit{OpenCV} y tiene múltiples optimizaciones aplicadas para poder proveer una ejecución más veloz del modelo.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Usando \textit{OpenCV} como el \textit{runtime} de inferencia, se promedia el procesamiento en 0.3 segundos por cuadro]{{\includegraphics[width=0.55\textwidth]{./img/opencv.png} }}
+    \captionsetup{margin=0cm}
+    \subfloat[\centering Usando \textit{OpenCV} como el \textit{runtime} de inferencia, se promedia el procesamiento en 0.3 segundos por cuadro]{{\includegraphics[width=0.48\textwidth]{./img/opencv.png} }}
     \qquad
-    \subfloat[\centering \textit{ONNX Runtime} puede darnos un rendimiento de 0.15 segundos por cuadro con pocas modificaciones]{{\includegraphics[width=0.55\textwidth]{./img/ort.png} }}
+    \subfloat[\centering \textit{ONNX Runtime} puede darnos un rendimiento de 0.15 segundos por cuadro con pocas modificaciones]{{\includegraphics[width=0.48\textwidth]{./img/ort.png} }}
 }
 \end{figure}
 
@@ -501,9 +502,10 @@ Haciendo una evaluación de nuestro servidor con múltiples \textit{CPUs} de dis
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Un procesador de 1\textit{GB} promedia el procesamiento de cuadros en 0.2 segundos por cuadro]{{\includegraphics[width=0.55\textwidth]{./img/ort-1gb.png} }}
+    \captionsetup{margin=0cm}
+    \subfloat[\centering Un procesador de 1\textit{GB} promedia el procesamiento de cuadros en 0.2 segundos por cuadro]{{\includegraphics[width=0.48\textwidth]{./img/ort-1gb.png} }}
     \qquad
-    \subfloat[\centering Un procesador de 16\textit{GB} redujo el procesamiento a la mitad, promediando en 0.1 segundos por cuadro]{{\includegraphics[width=0.55\textwidth]{./img/ort-16gb.png} }}
+    \subfloat[\centering Un procesador de 16\textit{GB} redujo el procesamiento a la mitad, promediando en 0.1 segundos por cuadro]{{\includegraphics[width=0.48\textwidth]{./img/ort-16gb.png} }}
 }
 \end{figure}
 
@@ -514,7 +516,7 @@ Una de las funcionalidades que provee nuestro sistema es la de poder elegir cóm
 La transformación más sencilla que se puede aplicar sobre una imagen es la de la detección. Esta transformación consiste en solamente indicar en la imagen el rectángulo en el que se detectó que hay un objeto presente.
 
 \begin{figure}[H]
-\makebox[\textwidth][c]{\includegraphics[width=0.9\textwidth]{./img/detect-bart.jpg}}
+\makebox[\textwidth][c]{\includegraphics[width=\textwidth]{./img/detect-bart.jpg}}
 \caption{Detección de múltiples objetos en la misma fotografía}
 \end{figure}
 
@@ -533,7 +535,7 @@ La última transformación desarrollada, probablemente la más interesante de la
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{./img/inpaint-old-photo.png}}
-\caption{El caso de uso más tradicional de \textit{Image Inpainting} es la restauración de fotos analógicas}
+\caption{El caso de uso más tradicional de \textit{Image Inpainting} es la restauración de fotos analógicas \scriptsize{\href{https://pyimagesearch.com/2020/05/18/image-inpainting-with-opencv-and-python/}{(ref)}}}
 \end{figure}
 
 Si bien esta técnica no está pensada para nuestro caso de uso, donde los carteles son rectángulos que ocupan gran parte de la imagen en vez de solamente una línea o un pequeño detalle, nos pareció una buena prueba de concepto para aplicar sobre nuestro sistema y en algunos casos da resultados bastante positivos.
@@ -551,13 +553,13 @@ Si bien esta técnica no está pensada para nuestro caso de uso, donde los carte
 
 Si bien dijimos que los dos atributos a priorizar en el armado de un modelo son la velocidad y la precisión, esto se puede extender a considerar el sistema en su totalidad. Más allá de que el modelo sea veloz y preciso, queremos traducir esto a la experiencia final del usuario.
 
-Estos atributos de calidad están intrínsecamente relacionados a los videos de entrada que consume el sistema. En el traspaso de las imágenes capturadas en la cámara del usuario a la entrada del modelo, se puede manipular esta información para optimizar los atributos mencionados, nuevamente teniendo que buscar un balance entre ellos. \\
+Estos atributos de calidad están intrínsecamente relacionados a los videos de entrada que consume el sistema. En el traspaso de las imágenes capturadas en la cámara del usuario a la entrada del modelo, se puede manipular esta información para optimizar los atributos mencionados, nuevamente teniendo que buscar un balance entre ellos. \medskip
 
-Los dispositivos de filmación pueden tomar videos en distintos \textit{frame rates} (cuadros capturados por segundo). Un video donde el frame rate sea alto, como por ejemplo de 120 cuadros por segundo, se verá más fluido que uno de menor frame rate, pero, al tener más imágenes, naturalmente será más costoso de procesar.
+Los dispositivos de filmación pueden tomar videos en distintos \textit{frame rates} (cuadros capturados por segundo). Un video donde el \textit{frame rate} sea alto, como por ejemplo de 120 cuadros por segundo, se verá más fluido que uno de menor \textit{frame rate}, pero, al tener más imágenes, naturalmente será más costoso de procesar.
 
 Una optimización que se puede aplicar en el consumo de los cuadros es decidir eliminar cuadros intermedios y pasarle menos imágenes a procesar al modelo. Al tener menos cuadros para procesar podemos mejorar la velocidad total de la inferencia del modelo, pero siempre cuidando la velocidad percibida del sistema: si se eliminan cuadros intermedios excesivamente, el video resultante será muy entrecortado y la experiencia del usuario se verá perjudicada.
 
-Además de la cantidad de cuadros nos importa la calidad de ellos. A mayor resolución, una imagen tiene más píxeles y es más nítida, dándole más información al modelo para detectar objetos sobre ella y así tener detecciones más precisas. Pero esto también resulta en un aumento del costo de procesamiento ya que hay más información de entrada. Modificando la calidad de las imágenes a procesar podemos nuevamente balancear el intercambio entre velocidad y precisión. \\
+Además de la cantidad de cuadros nos importa la calidad de ellos. A mayor resolución, una imagen tiene más píxeles y es más nítida, dándole más información al modelo para detectar objetos sobre ella y así tener detecciones más precisas. Pero esto también resulta en un aumento del costo de procesamiento ya que hay más información de entrada. Modificando la calidad de las imágenes a procesar podemos nuevamente balancear el intercambio entre velocidad y precisión. \medskip
 
 En particular, \textit{WebRTC} nos provee de mecanismos para ajustar dinámicamente los cuadros por segundo y la calidad de estos frente a una mala conexión del cliente. Esto nos permite mantener una sesión fluida sin interrumpir el sistema y recuperar la calidad de la inferencia al obtener una mejor comunicación entre el cliente y el servidor, siempre proveyendo la mejor experiencia posible frente a las condiciones dadas.
 
@@ -567,7 +569,7 @@ En particular, \textit{WebRTC} nos provee de mecanismos para ajustar dinámicame
 
 La plataforma sobre la cual construimos el sitio web es \textit{Streamlit} \cite{streamlit}. Este \textit{framework} tiene el propósito de convertir \textit{software} desarrollado en \textit{Python} en páginas web que sean fácilmente compartibles, con un foco en el campo de \textit{Data Science}.
 
-Decidimos utilizar este \textit{software} por su integración con todos los componentes que requiere nuestro sistema: tiene fácil acceso a la cámara del usuario, se integra con \textit{WebRTC} y nos da la posibilidad de desarrollar en \textit{Python}.
+Decidimos utilizar esta plataforma por su integración con todos los componentes que requiere nuestro sistema: tiene fácil acceso a la cámara del usuario, se integra con \textit{WebRTC} y nos da la posibilidad de desarrollar en \textit{Python}.
 
 En particular hacemos uso del componente externo \texttt{streamlit-webrtc} \cite{streamlit-webrtc}, un componente web que facilita el uso de \textit{WebRTC} en el sitio, permitiéndonos manipular las imágenes de entrada y salida que se le presentan al usuario, así permitiéndonos preparar lo capturado por el usuario para que sea consumido por nuestro modelo, y transformar los resultados del modelo para presentarlos.
 
@@ -577,7 +579,7 @@ El protocolo de comunicación utilizado en nuestro sistema es \textit{WebRTC}, e
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.8\textwidth]{./img/webrtc.png}}
-\caption{\textit{WebRTC} hace uso de servidores \textit{STUN} y \textit{TURN} para establecer las conexiones par-a-par a través de \textit{WebSockets}}
+\caption{\textit{WebRTC} hace uso de servidores \textit{STUN} y \textit{TURN} para establecer las conexiones par-a-par a través de \textit{WebSockets} \scriptsize{\href{https://medium.com/dvt-engineering/introduction-to-webrtc-cad0c6900b8e}{(ref)}}}
 \end{figure}
 
 Hay distintos servicios que proveen servidores de este tipo que varían en calidad y no siempre funcionan en todo tipo de entornos. Después de varias evaluaciones, donde se debe procurar que el servicio ande tanto en \textit{WiFi} como en redes móviles, utilizamos el servicio provisto por \textit{Open Relay} \cite{openrelay}.
@@ -603,7 +605,7 @@ Estos módulos fueron desglosados en las siguientes metas parciales:
 \begin{center}
 \begin{tabular}{c m{0.85\linewidth}} \toprule
     \textbf{CV1} & Clasificar una imagen de acuerdo a si contiene o no contiene un cartel publicitario con una \textit{CNN} de base. \\ \midrule
-    \textbf{CV2} & Evaluar los frameworks de detección de objetos como \textit{SSD}, \textit{YOLO} y \textit{R-CNN}. \newline Detectar la porción de la imagen donde se contiene el cartel. \\ \midrule
+    \textbf{CV2} & Evaluar los \textit{frameworks} de detección de objetos como \textit{SSD}, \textit{YOLO} y \textit{R-CNN}. \newline Detectar la porción de la imagen donde se contiene el cartel. \\ \midrule
     \textbf{CV3} & Descomponer un video en sus imágenes por segundo y procesar cada una de manera separada. \\ \midrule
     \textbf{CV4} & Evaluar las implementaciones de rastreo de objetos como \textit{CSRT}, \textit{KCF} y \textit{MOSSE}. \newline Detectar los objetos en algunas imágenes del video, y rastrear su movimiento, en vez de procesar cada imagen por separado. \\ \midrule
     \textbf{CV5} & Introducir modificaciones en las imágenes del video como difuminado y resaltado. \\ \midrule
@@ -634,7 +636,7 @@ En base a las metas parciales que planteamos inicialmente, diseñamos un cronogr
 \begin{itemize}
 \item \textbf{Prueba de Concepto y Viabilidad}
 
-Abarcó las siguientes metas: \textbf{CV1}, \textbf{CV2}, \textbf{CV3}, \textbf{CNN1} \\
+Abarcó las siguientes metas: \textbf{CV1}, \textbf{CV2}, \textbf{CV3}, \textbf{CNN1} \medskip
 
 El objetivo principal de esta etapa del trabajo fue lograr confirmar que realizar el trabajo propuesto era viable.
 
@@ -654,7 +656,7 @@ Además la herramienta por línea de comando también nos permitió hacer peque�
 
 \item \textbf{Arquitectura del Sistema}
 
-Abarcó las siguientes metas: \textbf{WEB1}, \textbf{WEB2} \\
+Abarcó las siguientes metas: \textbf{WEB1}, \textbf{WEB2} \medskip
 
 Durante esta etapa del trabajo buscamos evaluar las dos arquitecturas posibles para nuestra aplicación, cliente-servidor o detección en el cliente.
 
@@ -662,15 +664,15 @@ Para este punto del trabajo todavía no contábamos con nuestro modelo propio, s
 
 Como mencionamos previamente en este trabajo, comenzamos evaluando la posibilidad de procesar la detección del modelo enteramente en el cliente, utilizando \textit{WASM}, pero finalmente por cuestiones de rendimiento de la ejecución del entorno \textit{Python} en el dispositivo optamos por utilizar una arquitectura cliente-servidor.
 
-Una vez decidida la arquitectura construimos un sitio web (no desplegado), utilizando el framework \textit{Streamlit}, que detecta rostros de personas.
+Una vez decidida la arquitectura construimos un sitio web (no desplegado), utilizando el \textit{framework} \textit{Streamlit}, que detecta rostros de personas.
 
 \item \textbf{Funcionalidades Avanzadas}
 
-Abarcó las siguientes metas: \textbf{CV4}, \textbf{CNN2} \\
+Abarcó las siguientes metas: \textbf{CV4}, \textbf{CNN2} \medskip
 
 Una vez que construimos el sitio web local que detectaba y marcaba rostros en videos en tiempo real, tocaba entrenar nuestro propio modelo de detección de anuncios para luego reemplazar la detección de rostros por anuncios.
 
-Para esto evaluamos una técnica dentro del campo de \textit{Computer Vision} llamada \textit{Object Tracking} (Rastreo de objetos). Lo que busca hacer esta técnica es, no solamente entender en qué parte de una imagen se encuentra un objeto dado, sino que trata de identificarlo unívocamente para poder rastrearlo con el paso de los distintos cuadros del video.
+Para esto evaluamos una técnica dentro del campo de \textit{Computer Vision} llamada \textit{Object Tracking} (Rastreo de objetos). Lo que busca hacer esta técnica es no solamente entender en qué parte de una imagen se encuentra un objeto dado, sino que trata de identificarlo unívocamente para poder rastrearlo con el paso de los distintos cuadros del video.
 
 Es una técnica sofisticada que permite, por ejemplo, detectar en un video de un partido de fútbol, cuántos pases da cada jugador. Para contabilizar los pases de cada uno, deberíamos distinguir cada jugador del resto. Es allí donde el rastreo de objetos rinde frutos.
 Por nuestra parte decidimos descartar esta alternativa; el alcance de las funcionalidades que buscábamos implementar en el trabajo no era tan sofisticado como para necesitar rastrear los anuncios en un vídeo.
@@ -679,11 +681,11 @@ Habiendo descartado utilizar el rastreo de objetos para nuestro trabajo, seguimo
 
 Una vez que nos decidimos por \textit{YOLO}, comenzamos con los primeros entrenamientos probando un conjunto de datos por vez, de manera iterativa. De a poco fuimos experimentando con distintas formas de entrenar, combinar conjuntos de datos, cambiar parámetros del modelo, utilizar distintos tamaños de red y demás experimentos ya descritos en el informe.
 
-Un problema con el que nos encontramos rápidamente fue que las imágenes de entrenamiento tienen un tamaño no despreciable, por lo que se nos estaba haciendo tedioso y extremadamente lento versionar los conjuntos de datos usados junto al código de la aplicación en nuestro repositorio. Para solucionar este problema nos tomamos el trabajo de realizar un pequeño módulo de descarga de \textit{datasets}, que se ejecutaba previo al comienzo de entrenamiento de un modelo, asegurando que se descarguen todas las imágenes necesarias para poder lograr un entrenamiento consistente con los otros modelos.
+Un problema con el que nos encontramos rápidamente fue que las imágenes de entrenamiento tienen un tamaño no despreciable, por lo que se nos estaba haciendo tedioso y extremadamente lento versionar los conjuntos de datos usados junto al código de la aplicación en nuestro repositorio. Para solucionar este problema realizamos un pequeño módulo de descarga de \textit{datasets}, que se ejecutaba previo al comienzo de entrenamiento de un modelo, asegurando que se tengan todas las imágenes necesarias para poder lograr un entrenamiento consistente con los otros modelos.
 
 \item \textbf{Trabajo Final}
 
-Abarcó las siguientes metas: \textbf{WEB3}, \textbf{CV5}, \textbf{CV6} \\
+Abarcó las siguientes metas: \textbf{WEB3}, \textbf{CV5}, \textbf{CV6} \medskip
 
 La primera parte de la etapa final del trabajo fue desplegar el sitio web en un servidor que fuera accesible por internet desde cualquier dispositivo. Para esto, como ya mencionamos en el trabajo, usamos el servicio de \textit{Fly.io}. Vale aclarar que nuestro primer despliegue de la web no tenía nuestro propio modelo con detección de anuncios, sino que solamente funcionaba con el modelo que detectaba rostros.
 
@@ -703,30 +705,29 @@ Con estos últimos ajustes finalizamos un trabajo que cumple los objetivos estab
 
 \end{itemize}
 
-\newpage
 \section{Conclusiones y Trabajo Futuro}
 
-Finalizando, notamos distintas lecciones y aprendizajes que tomamos del desarrollo del trabajo en su totalidad, y rumbos posibles que se nos ocurren para el sistema en un futuro. \\
+Finalizando, notamos distintas lecciones y aprendizajes que tomamos del desarrollo del trabajo en su totalidad, y rumbos posibles que se nos ocurren para el sistema en un futuro. \medskip
 
 Lo primero que podemos decir del desarrollo es que nos adentró a un campo del cual no teníamos ningún tipo de experiencia práctica y nos reveló que existen múltiples problemas abiertos por solucionar y cómo de cada idea que puede surgir ya hay un cúmulo de investigación inmenso del cual partir.
-Además de la abundancia de investigación, nos sorprendió la calidad de la experiencia de desarrollo. Frente a cada problema que nos encontramos, se nos presentaron múltiples herramientas a evaluar que hicieron más fácil nuestro trabajo. Nos otorgaron soluciones tanto a bajo como a alto nivel de entendimiento del problema, según lo requiriésemos. El presente trabajo se logró gracias a las distintas herramientas que usamos y sin ellas no podría haber salido de la forma buscada. \\
+Además de la abundancia de investigación, nos sorprendió la calidad de la experiencia de desarrollo. Frente a cada problema que nos encontramos, se nos presentaron múltiples herramientas a evaluar que hicieron más fácil nuestro trabajo. Nos otorgaron soluciones tanto a bajo como a alto nivel de entendimiento del problema, según lo requiriésemos. El presente trabajo se logró gracias a las distintas herramientas que usamos y sin ellas no podría haber salido de la forma buscada. \medskip
 
 \textit{Computer Vision} es un campo de alta complejidad con muchos matices y opciones para investigar, es por esto que de querer extender este trabajo y las funcionalidades del sistema desarrollado, se nos presentan múltiples ideas que se podrían tener en cuenta:
 
 \begin{itemize}
-\item \textbf{Rastreo de Objetos:} Si bien nosotros descartamos utilizarlo porque lo consideramos fuera del alcance, puede ser una herramienta muy interesante para generar nuevos tipos de estadísticas sobre el video que está siendo procesado. Por ejemplo, podríamos ofrecerle al usuario las marcas de tiempo exactas donde se vio un anuncio específico en el video, o un contador de cuántas veces aparece cada anuncio, rastreando cuándo un anuncio específico entra y sale de pantalla.
+\item \textbf{Rastreo de objetos:} Si bien nosotros descartamos utilizarlo porque lo consideramos fuera del alcance, puede ser una herramienta muy interesante para generar nuevos tipos de estadísticas sobre el video que está siendo procesado. Por ejemplo, podríamos ofrecerle al usuario las marcas de tiempo exactas donde se vio un anuncio específico en el video, o un contador de cuántas veces aparece cada anuncio, rastreando cuándo uno en específico entra y sale de pantalla.
 
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{./img/multiple-object-tracking.jpg}}
-\caption{El \textit{Object Tracking} identifica cada objeto detectado unívocamente}
+\caption{El \textit{Object Tracking} identifica cada objeto detectado unívocamente \scriptsize{\href{https://viso.ai/deep-learning/object-tracking/}{(ref)}}}
 \end{figure}
 
 \item \textbf{Segmentación:} En nuestra implementación, el difuminado del anuncio se hace marcando el centro del rectángulo que lo contiene y aplicando una difuminación gaussiana que difumina más en el centro y menos a medida que se aleja de él. Si bien es una solución aceptable, no es perfecta. Se podría mejorar reemplazando la detección del modelo con rectángulo minimal actual por los segmentos indicados con la técnica de \textit{Object Segmentation}. Esta técnica además de entender dónde está el objeto en la imagen da información sobre la forma exacta del mismo. Esto podría permitir hacer transformaciones sobre la imagen con mayor precisión.
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{
-    \subfloat[\centering Los distintos problemas de \textit{Computer Vision} dentro de los cuales se encuentran los tipos de segmentación]{{\includegraphics[width=0.75\textwidth]{./img/segmentation-goat.jpeg} }}
+    \subfloat[\centering Los distintos problemas de \textit{Computer Vision} dentro de los cuales se encuentran los tipos de segmentación \scriptsize{\href{https://manipulation.mit.edu/segmentation.html}{(ref)}}]{{\includegraphics[width=0.75\textwidth]{./img/segmentation-goat.jpeg} }}
     \qquad
     \subfloat[\centering En nuestro caso, la segmentación se aplicaría sobre carteles publicitarios]{{\includegraphics[width=0.35\textwidth]{./img/segmentation.png} }}
 }
@@ -736,18 +737,18 @@ Además de la abundancia de investigación, nos sorprendió la calidad de la exp
 
 \begin{figure}[H]
 \makebox[\textwidth][c]{\includegraphics[width=0.6\textwidth]{./img/multi-class.png}}
-\caption{La multi clasificación identifica distintas categorías de objetos en la misma imagen}
+\caption{La multi clasificación identifica distintas categorías de objetos en la misma imagen \scriptsize{\href{https://medium.com/analytics-vidhya/yolo-object-detection-made-easy-7b17cc3e782f/}{(ref)}}}
 \end{figure}
 
 \end{itemize}
 
-Asimismo, en el transcurso del trabajo fuimos testigos de cómo este es un campo que todavía está en constante cambio y mejora. Solo por dar un ejemplo, al comenzar este trabajo la implementación más avanzada de la familia de algoritmos \textit{YOLO} era \textit{YOLOv8} (presentado en enero de 2023 \cite{yolov8}) y al finalizarlo comenzamos a ver implementaciones de \textit{YOLOv10} (publicado en mayo de 2024 \cite{yolov10}). Es claro que esta podría ser otra opción para la extensión del trabajo, uno podría partir de los mismos conjuntos de datos que ya utilizamos nosotros y recrear todos nuestros entrenamientos utilizando versiones más modernas de \textit{YOLO} para comparar las mejoras o directamente mejorar la aplicación web. \\
+Asimismo, en el transcurso del trabajo fuimos testigos de cómo este es un campo que todavía está en constante cambio y mejora. Solo por dar un ejemplo, al comenzar este trabajo la implementación más avanzada de la familia de algoritmos \textit{YOLO} era \textit{YOLOv8} (presentado en enero de 2023 \cite{yolov8}) y al finalizarlo comenzamos a ver implementaciones de \textit{YOLOv10} (publicado en mayo de 2024 \cite{yolov10}). Es claro que esta podría ser otra opción para la extensión del trabajo, uno podría partir de los mismos conjuntos de datos que ya utilizamos nosotros y recrear todos nuestros entrenamientos utilizando versiones más modernas de \textit{YOLO} para comparar las mejoras o directamente mejorar la aplicación web. \medskip
 
 Es importante notar que también nos encontramos frente a una evolución constante en otros campos que dependen de \textit{Computer Vision}, siendo que la información visual sigue creciendo cada vez más como la interfaz elegida por preferencia, donde por ejemplo un modelo de lenguaje grande como \textit{GPT} introdujo recientemente la interpretación de fotografías como entrada \cite{chatgpt-vision}.
 
-Es por esto que también podemos dejar atrás la idea de que el video siempre va a estar filmado desde un dispositivo celular y pensar en qué otras plataformas podríamos desplegar este sistema, como podría ser un casco de realidad virtual. Conociendo lo popular que es la idea de tener un \textit{software} que oculte anuncios en nuestro explorador web (un \textit{ad blocker}), no nos parece ilógico pensar que alguien quiera ocultar anuncios en la vida real mientras está usando un dispositivo como los cascos \textit{Meta Quest} o \textit{Apple Vision Pro}. \\
+Es por esto que también podemos dejar atrás la idea de que el video siempre va a estar filmado desde un dispositivo celular y pensar en qué otras plataformas podríamos desplegar este sistema, como podría ser un casco de realidad virtual. Conociendo lo popular que es la idea de tener un \textit{software} que oculte anuncios en nuestro explorador web (un \textit{ad blocker}), no nos parece ilógico pensar que alguien quiera ocultar anuncios en la vida real mientras está usando un dispositivo como los cascos \textit{Meta Quest} o \textit{Apple Vision Pro}. \medskip
 
-El entrenamiento de los modelos es un proceso muy costoso que requiere un uso intensivo de recursos. Si bien es cierto que aprovechamos las ventajas de todas las investigaciones disponibles y las herramientas de código libre y abierto para poder realizar este trabajo, no dejamos de tener que lidiar con la necesidad de precisar un alto poder computacional para lograr buenos resultados en un tiempo razonable. Hoy en día existen soluciones a esta problemática donde uno puede pagar por unidades de procesamiento gráficas modernas y potentes lo cual hace que las iteraciones de entrenamiento sean mucho más rápidas y puedan hacerse sobre mayor cantidad de datos, resultando así en un mejor resultado final. Si bien nuestro proyecto no lo requirió, esto nos muestra cómo el tener mejor \textit{hardware} ayuda a mitigar el balance entre velocidad y precisión que planteamos en el proyecto. Sabiendo que el \textit{hardware} es algo que mejora muy rápidamente con el tiempo, sería interesante revisar cómo replicar este proyecto en unos años. Además, nos muestra cómo el entrenamiento de modelos, por más que las herramientas de \textit{software} puedan ser las mismas para todos, está atado a la inversión monetaria que se haga en este, indicando que si se quiere competir efectivamente en este campo se necesitan recursos significativos. \\
+El entrenamiento de los modelos es un proceso muy costoso que requiere un uso intensivo de recursos. Si bien es cierto que aprovechamos las ventajas de todas las investigaciones disponibles y las herramientas de código libre y abierto para poder realizar este trabajo, no dejamos de tener que lidiar con la necesidad de precisar un alto poder computacional para lograr buenos resultados en un tiempo razonable. Hoy en día existen soluciones a esta problemática donde uno puede pagar por unidades de procesamiento gráficas modernas y potentes lo cual hace que las iteraciones de entrenamiento sean mucho más rápidas y puedan hacerse sobre mayor cantidad de datos, resultando así en un mejor resultado final. Si bien nuestro proyecto no lo requirió, esto nos muestra cómo el tener mejor \textit{hardware} ayuda a mitigar el balance entre velocidad y precisión que planteamos en el proyecto. Sabiendo que el \textit{hardware} es algo que mejora muy rápidamente con el tiempo, sería interesante revisar cómo replicar este proyecto en unos años. Además, nos muestra cómo el entrenamiento de modelos, por más que las herramientas de \textit{software} puedan ser las mismas para todos, está atado a la inversión monetaria que se haga en este, indicando que si se quiere competir efectivamente en este campo se necesitan recursos significativos. \medskip
 
 En definitiva, este proyecto nos permitió aprender y aplicar técnicas avanzadas de \textit{Computer Vision}, revelándonos tanto su potencial como sus desafíos, y mostrándonos las oportunidades interesantes que van a surgir en el campo con el avance de estas tecnologías.
 
