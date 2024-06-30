@@ -101,7 +101,11 @@ with webrtc_container:
             "audio": False,
         },
         desired_playing_state=True,
-        video_html_attrs={"controls": False, "autoPlay": True},
+        video_html_attrs={
+            "style": {"width": "100%"},
+            "controls": False,
+            "autoPlay": True,
+        },
         key="webrtc",
     )
 
