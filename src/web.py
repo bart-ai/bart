@@ -44,7 +44,7 @@ st.set_page_config(
 # The general layout of the app: title -> webcam -> config panel -> stats panel
 st.title(
     "bart: blocking ads in real time",
-    help="[source code](https://github.com/bart-ai/bart)",
+    help="[source code](https://github.com/bart-ai/bart) :link:",
 )
 
 webrtc_container = st.container()
