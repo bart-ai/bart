@@ -16,6 +16,11 @@ BILLBOARD_MODEL_IMAGE_SIZE = 640
 OBJECT = {"FACES": "face", "BILLBOARDS": "billboard"}
 AVAILABLE_MODELS = [
     {
+        "name": "isfau dataset - 7137 images",
+        "detection": OBJECT["BILLBOARDS"],
+        "filename": "yolov8n-e60-isfau-bestparams.onnx",
+    },
+    {
         "name": "s2oeb dataset - 8155 images",
         "detection": OBJECT["BILLBOARDS"],
         "filename": "yolov8n-e60-s2oeb-bestparams.onnx",
@@ -29,11 +34,6 @@ AVAILABLE_MODELS = [
         "name": "ydtns dataset - 2719 images",
         "detection": OBJECT["BILLBOARDS"],
         "filename": "yolov8n-e60-ydtns-bestparams.onnx",
-    },
-    {
-        "name": "isfau dataset - 7137 images",
-        "detection": OBJECT["BILLBOARDS"],
-        "filename": "yolov8n-e60-isfau-bestparams.onnx",
     },
     {
         "name": "uo2ld dataset - 1903 images",
