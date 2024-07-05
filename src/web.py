@@ -10,30 +10,33 @@ import requests
 
 from model import TRANSFORMATIONS, AVAILABLE_MODELS, Model
 
-# https://www.metered.ca/docs/turnserver-guides/expiring-turn-credentials/
-ICE_SERVERS_TTL_SECONDS = 1800  # half an hour
-@st.cache_resource(ttl=ICE_SERVERS_TTL_SECONDS, show_spinner=False)
 def get_ice_servers():
     servers = [{"urls": ["stun:stun.l.google.com:19302"]}]
     try:
+        # https://www.metered.ca/docs/turnserver-guides/expiring-turn-credentials/
         credentials = requests.post(
             f"https://bart.metered.live/api/v1/turn/credential?secretKey={os.environ['BART_METERED_LIVE_SECRET_KEY']}",
             headers={"Content-Type": "application/json"},
-            json={"expiryInSeconds": ICE_SERVERS_TTL_SECONDS, "label": "bart"},
+            json={"expiryInSeconds": 1800, "label": "bart"}, # 30 minutes
         ).json()
 
         ice_servers = requests.get(
             f"https://bart.metered.live/api/v1/turn/credentials?apiKey={credentials['apiKey']}"
         ).json()
 
-        servers.extend(ice_servers)
+        servers = ice_servers
     except Exception as e:
         print(f"Error setting up STUN/TURN servers: {e}")
 
     return servers
 
-
-ice_servers = get_ice_servers()
+# We save the ICE servers in the session state
+servers_cache_key = "ice_servers"
+if servers_cache_key in st.session_state:
+    ice_servers = st.session_state[servers_cache_key]
+else:
+    ice_servers = get_ice_servers()
+    st.session_state[servers_cache_key] = ice_servers
 
 st.set_page_config(
     page_title="bart · Streamlit",
