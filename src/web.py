@@ -162,6 +162,6 @@ with stats_panel:
 # if uploaded_file:
 #     uploaded_image = Image.open(uploaded_file)
 #     frame, _ = model.detect(
-#         np.array(uploaded_image), transformation="detect", confidence=15 / 100
+#         np.array(uploaded_image), transformation=transformation, confidence=confidence / 100
 #     )
 #     st.image(frame)

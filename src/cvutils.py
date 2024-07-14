@@ -38,7 +38,7 @@ def inpaint(frame, coords):
 
 
 # Calculate the total area covered by a list of bounding boxes
-# TODO: Check if the 'line sweep' algorithm performs better
+# IDEA: Check if the 'line sweep' algorithm performs better
 # https://stackoverflow.com/questions/5880558/intersection-of-n-rectangles
 def calculate_total_area_covered_by_bboxes(bounding_boxes):
     total_area = 0
