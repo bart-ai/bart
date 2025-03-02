@@ -17,6 +17,4 @@ primary_region = "eze"
   processes = ["app"]
 
 [[vm]]
-  cpu_kind = "shared"
-  cpus = 8
-  memory_mb = 16384
+  size = "shared-cpu-8x"
